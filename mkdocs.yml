@@ -5,6 +5,8 @@ site_author: Todd Menier
 repo_url: https://github.com/tmenier/Flurl
 edit_uri: ''
 
+theme: slate
+
 docs_dir: content
 pages:
 - Home: index.md
