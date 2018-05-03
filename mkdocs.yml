@@ -1,1 +1,23 @@
-site_name: My Docs
+site_name: Flurl
+site_description: Fluent URL building and wrist-friendly HTTP client for .NET
+site_author: Todd Menier
+
+repo_url: https://github.com/tmenier/Flurl
+edit_uri: ''
+
+docs_dir: content
+pages:
+- Home: index.md
+- Docs:
+    - Installation: docs/installation.md
+    - Fluent URL building: docs/fluent-url.md
+    - Fluent HTTP: docs/fluent-http.md
+    - Testable HTTP: docs/testable-http.md
+    - Configuration: docs/configuration.md
+    - Error Handling: docs/error-handling.md
+    - HttpClient Lifetime Management: docs/client-lifetime.md
+    - Extensibility: docs/extensibility.md
+
+markdown_extensions:
+    - toc:
+        permalink: 
