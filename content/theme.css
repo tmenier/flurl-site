@@ -12,6 +12,9 @@ body.homepage .col-md-3 {
 body.homepage .col-md-9 {
   width: 100%;
 }
+body.homepage pre code {
+  font-size: 18px;
+}
 .navbar {
   border: none;
 }
