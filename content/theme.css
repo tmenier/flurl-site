@@ -6,6 +6,12 @@ a,
 a:hover {
   color: #fc0;
 }
+body.homepage .col-md-3 {
+  display: none;
+}
+body.homepage .col-md-9 {
+  width: 100%;
+}
 .navbar {
   border: none;
 }
