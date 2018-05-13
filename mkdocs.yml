@@ -5,12 +5,13 @@ site_author: Todd Menier
 repo_url: https://github.com/tmenier/Flurl
 edit_uri: ''
 
-theme: flatly
-extra_css:
-    - theme.css
-    - highlightjs-theme.css
-
+theme:
+    name: flatly
+    custom_dir: theme
 docs_dir: content
+extra_css:
+    - css/theme.css
+    - css/highlightjs.css
 pages:
 - Home: index.md
 - Docs:
