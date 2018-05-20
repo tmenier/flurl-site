@@ -23,9 +23,23 @@ body.homepage {
 
 .navbar {
   border: none;
-}
-.navbar-default {
   background-color: #333;
+
+  .navbar-header {
+    :first-letter {
+      font-size: 36px;
+      font-family: 'Leckerli One', cursive;
+      margin-right: 1 px;
+    }
+
+    .navbar-brand,
+    .navbar-brand:hover {
+      font-size: 32px;
+      color: #fc0;
+      font-family: 'Lobster', cursive;
+      padding: 19px 15px;
+    }
+  }
 
   .navbar-nav {
     >li>a:hover,
