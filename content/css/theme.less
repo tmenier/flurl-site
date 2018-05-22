@@ -59,7 +59,6 @@ body.homepage {
       padding: 14px 15px;
     }
 
-
     >li>a:hover,
     >li.active>a:hover {
       color: @yellow;
@@ -73,6 +72,13 @@ body.homepage {
     >li.open>a:focus {
       background-color: @charcoal;  
     }
+  }
+}
+
+/* hide left nav for narrow screen */
+@media (max-width: 991px) {
+  .col-md-3 {
+    display: none;
   }
 }
 

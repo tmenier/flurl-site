@@ -55,6 +55,12 @@ body.homepage pre code {
 .navbar .navbar-nav > li.open > a:focus {
   background-color: #252525;
 }
+/* hide left nav for narrow screen */
+@media (max-width: 991px) {
+  .col-md-3 {
+    display: none;
+  }
+}
 code {
   color: #dfdfdf;
   background-color: #191919;
