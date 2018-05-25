@@ -146,7 +146,7 @@ FlurlHttp.Configure(settings => {
 });
 ```
 
-### [Event Handlers](event-handlers)
+### Event Handlers
 
 Keeping cross-cutting concerns like logging and error handling separated from your normal logic flow often results in cleaner code. Flurl.Http provides an event model for these scenarios. `BeforeCall`, `AfterCall`, `OnError`, and their `Async*` equivalents are typically defined at the global or client level, but can be defined per request if it makes sense. These settings each take an `Action<HttpCall>` delegate (`Func<HttpCall, Task>` for the async versions). `HttpCall` provides rich details about the call that you can act upon:
 

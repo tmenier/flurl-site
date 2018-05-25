@@ -1,7 +1,3 @@
----
-layout: default
----
-
 ## HttpClient Lifetime Management
 
 Flurl.Http uses [HttpClient](https://msdn.microsoft.com/en-us/library/system.net.http.httpclient.aspx) under the hood. If you're familiar with this object, you probably already know this [advice](https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/calling-a-web-api-from-a-net-client):
@@ -16,7 +12,7 @@ var data = await "http://api.com/endpoint".GetJsonAsync();
 
 (Note that this is _not_ the default behavior in 1.x. If you want this behavior without having to manage client objects explicitly, [upgrading](https://www.nuget.org/packages/Flurl.Http/) is highly recommended.)
 
-## Managing Instances Explicitly
+### Managing Instances Explicitly
 
 `FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. (It implements `IDisposable`, and when disposed will also dispose `HttpClient`.) `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Cookies`, `Settings`, and many of the [fluent methods]({{ site.baseurl }}/fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
 
@@ -30,7 +26,7 @@ using (var cli = new FlurlClient("https://api.com").WithOAUthBearerToken(token))
 }
 ```
 
-## Using Flurl With an IoC Container
+### Using Flurl With an IoC Container
 
 Flurl.Http is well suited for use with IoC containers and dependency injection. It provides interfaces for its core classes, most notably `IFlurlClient`. Here are some options for registering `IFlurlClient` with your container:
 

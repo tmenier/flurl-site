@@ -20,11 +20,11 @@ PM> Install-Package Flurl.Http.Xml
 
 (Flurl.Http.Xml is maintained and documented [here](https://github.com/lvermeulen/Flurl.Http.Xml).)
 
-## Supported Platforms
+### Supported Platforms
 
 Flurl targets .NET Standard 1.0 and Flurl.Http targets .NET Standard 1.1, meaning both will run on just about every platform that .NET runs on, including .NET Framework, .NET Core, Xamarin (iOS and Android), Mono, Windows Phone, and more. For specific platform versions, see the [.NET Standard compatibility matrix](https://docs.microsoft.com/en-us/dotnet/standard/net-standard).
 
-## Acknowledgements
+### Acknowledgements
 
 Flurl is truly a community effort. Special thanks to the following contributors:
 
