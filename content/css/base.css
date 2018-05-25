@@ -2,22 +2,18 @@ body {
   background-color: #252525;
   color: #dfdfdf;
   font-size: 16px;
+  padding-top: 70px;
 }
-a,
-a:hover {
+body a,
+body a:hover {
   color: #fc0;
 }
-.col-md-9 {
+body .col-md-3 {
+  padding-left: 0;
+}
+body .col-md-9 {
   padding: 0;
-}
-body.homepage .col-md-3 {
-  display: none;
-}
-body.homepage .col-md-9 {
-  width: 100%;
-}
-body.homepage pre code {
-  font-size: 18px;
+  margin-top: -20px;
 }
 /* top nav */
 .navbar {
@@ -25,13 +21,15 @@ body.homepage pre code {
   background-color: #333;
   min-height: 44px;
 }
+.navbar .navbar-header {
+  /* logo */
+}
 .navbar .navbar-header :first-letter {
   font-size: 34px;
   font-family: 'Leckerli One', cursive;
   margin-right: 1 px;
 }
-.navbar .navbar-header .navbar-brand,
-.navbar .navbar-header .navbar-brand:hover {
+.navbar .navbar-header .navbar-brand {
   font-size: 30px;
   color: #fc0;
   font-family: 'Lobster', cursive;
@@ -40,25 +38,27 @@ body.homepage pre code {
 .navbar .navbar-header .navbar-toggle {
   margin: 7px;
   background-color: #191919;
+  outline: none;
 }
 .navbar .navbar-nav > li > a {
   padding: 14px 15px;
 }
-.navbar .navbar-nav > li > a:hover,
-.navbar .navbar-nav > li.active > a:hover {
+.navbar .navbar-nav > li > a:hover {
   color: #fc0;
 }
 .navbar .navbar-nav > li.active > a,
-.navbar .navbar-nav > li.active > a:hover,
-.navbar .navbar-nav > li.active > a:focus,
 .navbar .navbar-nav > li.open > a,
+.navbar .navbar-nav > li.active > a:hover,
 .navbar .navbar-nav > li.open > a:hover,
+.navbar .navbar-nav > li.active > a:focus,
 .navbar .navbar-nav > li.open > a:focus {
   background-color: #252525;
+  color: #fc0;
 }
 /* toc */
 .bs-sidebar.well {
   background-color: #333;
+  padding: 6px 0;
 }
 .bs-sidebar.well ul {
   padding-left: 0;
@@ -84,19 +84,53 @@ body.homepage pre code {
   color: #fc0;
   border-right: 2px solid #fc0;
 }
-/* hide left nav for narrow screen */
+/* home page (hide TOC, etc) */
+body.homepage .col-md-3 {
+  display: none;
+}
+body.homepage .col-md-9 {
+  width: 100%;
+}
+body.homepage pre code {
+  font-size: 18px;
+}
+/* Show and affix the side nav when space allows it */
 @media (max-width: 991px) {
   .col-md-3 {
     display: none;
   }
 }
+@media (min-width: 992px) {
+  .bs-sidebar {
+    width: 213px;
+  }
+}
+@media (min-width: 1200px) {
+  .bs-sidebar {
+    width: 263px;
+  }
+}
 code {
   color: #dfdfdf;
   background-color: #191919;
-  border: none;
 }
 pre {
   padding: 6px;
   border-color: #000;
   background-color: #191919;
+}
+footer {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 200;
+}
+/* https://github.com/mkdocs/mkdocs/issues/843 */
+:target::before {
+  content: "";
+  display: block;
+  margin-top: -70px;
+  height: 70px;
+  pointer-events: none;
+  animation: 0s 1s forwards collapse-anchor-padding-1;
 }
