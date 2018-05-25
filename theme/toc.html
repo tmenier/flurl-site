@@ -3,10 +3,9 @@
     {% for nav_item in nav %}
         {% if nav_item.active %}
             {% for nav_item in nav_item.children %}
-                <li><a href="{{ nav_item.url }}">{{ nav_item.title }}</a></li>
+                <li class="main {% if nav_item.active %}active{% endif %}"><a href="{{ nav_item.url }}">{{ nav_item.title }}</a></li>
                 {% if nav_item.active %}
                     {% for toc_item in page.toc %}
-                        <li class="main {% if toc_item.active %}active{% endif %}"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
                         {% for toc_item in toc_item.children %}
                             <li class="sub"><a href="{{ toc_item.url }}">{{ toc_item.title }}</a></li>
                         {% endfor %}

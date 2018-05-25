@@ -28,6 +28,7 @@ body.homepage {
   }
 }
 
+/* top nav */
 .navbar {
   border: none;
   background-color: @gray;
@@ -71,6 +72,38 @@ body.homepage {
     >li.open>a:hover,
     >li.open>a:focus {
       background-color: @charcoal;  
+    }
+  }
+}
+
+/* toc */
+.bs-sidebar.well {
+  background-color: @gray;
+  ul {
+    padding-left: 0;
+    li {
+      list-style: none;
+      a {
+        display: block;
+        color: @white;
+        border-right: 2px solid @gray;
+      }
+      a:hover {
+        color: @yellow;
+        text-decoration: none;
+        background-color: @charcoal;
+      }
+    }
+    li.sub {
+      a {
+        padding: 5px 20px 5px 35px;
+      }
+    }
+    li.active, li:hover {
+      a {
+        color: @yellow;
+        border-right: 2px solid @yellow;
+      }
     }
   }
 }

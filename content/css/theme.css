@@ -19,6 +19,7 @@ body.homepage .col-md-9 {
 body.homepage pre code {
   font-size: 18px;
 }
+/* top nav */
 .navbar {
   border: none;
   background-color: #333;
@@ -54,6 +55,34 @@ body.homepage pre code {
 .navbar .navbar-nav > li.open > a:hover,
 .navbar .navbar-nav > li.open > a:focus {
   background-color: #252525;
+}
+/* toc */
+.bs-sidebar.well {
+  background-color: #333;
+}
+.bs-sidebar.well ul {
+  padding-left: 0;
+}
+.bs-sidebar.well ul li {
+  list-style: none;
+}
+.bs-sidebar.well ul li a {
+  display: block;
+  color: #dfdfdf;
+  border-right: 2px solid #333;
+}
+.bs-sidebar.well ul li a:hover {
+  color: #fc0;
+  text-decoration: none;
+  background-color: #252525;
+}
+.bs-sidebar.well ul li.sub a {
+  padding: 5px 20px 5px 35px;
+}
+.bs-sidebar.well ul li.active a,
+.bs-sidebar.well ul li:hover a {
+  color: #fc0;
+  border-right: 2px solid #fc0;
 }
 /* hide left nav for narrow screen */
 @media (max-width: 991px) {
