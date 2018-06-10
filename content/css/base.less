@@ -70,6 +70,28 @@ body {
   }
 }
 
+.dropdown-menu {
+  background-color: @gray;
+
+  >li, >li.active {
+    >a {
+      color: @white;
+      padding: 8px 25px;
+    }
+    >a:hover,
+    >a:focus {
+      color: @yellow;
+      background-color: @charcoal;
+    }
+  }
+
+  >li.active>a {
+    color: @yellow;
+    background-color: inherit;
+  }
+}
+
+/* next/prev links */
 .navbar-footer {
   .navbar-nav {
     width: 100%;
