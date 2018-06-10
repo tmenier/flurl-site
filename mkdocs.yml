@@ -10,7 +10,6 @@ theme:
     custom_dir: theme
 docs_dir: content
 extra_css:
-    - css/theme.css
     - css/highlightjs.css
 pages:
 - Home: index.md
@@ -26,4 +25,4 @@ pages:
 
 markdown_extensions:
     - toc:
-        permalink: 
+        permalink: ☍

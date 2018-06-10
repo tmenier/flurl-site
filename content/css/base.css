@@ -110,6 +110,16 @@ body.homepage pre code {
     width: 263px;
   }
 }
+h2 a.headerlink,
+h3 a.headerlink {
+  visibility: hidden;
+  font-size: 24px;
+  margin-left: 12px;
+}
+h2:hover a.headerlink,
+h3:hover a.headerlink {
+  visibility: visible;
+}
 code {
   color: #dfdfdf;
   background-color: #191919;
