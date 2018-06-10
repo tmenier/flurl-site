@@ -94,7 +94,7 @@ body .col-md-9 {
   color: #dfdfdf;
 }
 .navbar-footer .navbar-nav > li > a .fa {
-  margin: 0 6px;
+  margin: 0 3px;
 }
 .navbar-footer .navbar-nav > li > a:hover,
 .navbar-footer .navbar-nav > li > a:focus {
@@ -179,10 +179,23 @@ pre {
   background-color: #191919;
 }
 footer {
-  margin-top: 30px;
-  margin-bottom: 10px;
   text-align: center;
-  font-weight: 200;
+}
+.table > thead > tr > th {
+  border-bottom: 2px solid #666;
+}
+.table > tbody > tr > td {
+  border-top: 1px solid #666;
+}
+.table > tbody > tr > td {
+  /* no striping */
+  background-color: inherit !important;
+}
+hr {
+  border-top: 1px solid #666;
+}
+blockquote {
+  border-left: 5px solid #666;
 }
 /* https://github.com/mkdocs/mkdocs/issues/843 */
 :target::before {

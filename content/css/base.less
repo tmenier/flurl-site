@@ -1,5 +1,6 @@
 @charcoal: #252525;
 @gray: #333;
+@light-gray: #666;
 @white: #dfdfdf;
 @yellow: #fc0;
 @black: #191919;
@@ -113,7 +114,7 @@ body {
     >li>a {
       color: @white;
       .fa {
-        margin: 0 6px;
+        margin: 0 3px;
       }
     }
     >li>a:hover,
@@ -216,10 +217,28 @@ pre {
 }
 
 footer {
-  margin-top: 30px;
-  margin-bottom: 10px;
   text-align: center;
-  font-weight: 200;
+}
+
+.table {
+  >thead>tr>th {
+    border-bottom: 2px solid @light-gray;
+  }
+  >tbody>tr>td {
+    border-top: 1px solid @light-gray;
+  }
+  >tbody>tr>td {
+    /* no striping */
+    background-color: inherit !important;
+  }
+}
+
+hr {
+  border-top: 1px solid @light-gray;
+}
+
+blockquote {
+  border-left: 5px solid @light-gray;
 }
 
 /* https://github.com/mkdocs/mkdocs/issues/843 */
