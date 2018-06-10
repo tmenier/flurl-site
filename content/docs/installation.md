@@ -6,7 +6,7 @@ Flurl is [available on NuGet](https://www.nuget.org/packages?q=flurl) in several
 PM> Install-Package Flurl.Http
 ````
 
-For *just* the [URL builder functionality]({{ site.baseurl }}/fluent-url) without the HTTP features:
+For *just* the [URL builder functionality](fluent-url) without the HTTP features:
 
 ````
 PM> Install-Package Flurl

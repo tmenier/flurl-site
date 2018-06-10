@@ -62,7 +62,7 @@ Fluently configure a single request (via extension method on `string`, `Url`, or
 await url.ConfigureRequest(settings => ...).GetAsync();
 ```
 
-Override any settings from within a [test]({{ site.baseurl }}/testable-http), regardless what level they're set at in the test subject:
+Override any settings from within a [test](testable-http), regardless what level they're set at in the test subject:
 
 ```c#
 httpTest.Configure(settings => ...);
@@ -105,7 +105,7 @@ Note that custom HttpClient factories are _not_ the recommended place to control
 
 ### FlurlClientFactory
 
-`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call the `Url`. The implemetation registered globally is `PerHostUrl` which, as discussed [here]({{ site.baseurl }}/client-lifetime), uses a single cached instance of `FlurlClient` per host being called for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on a Url, without having to implement the cache itself.
+`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call the `Url`. The implemetation registered globally is `PerHostUrl` which, as discussed [here](client-lifetime), uses a single cached instance of `FlurlClient` per host being called for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on a Url, without having to implement the cache itself.
 
 ```c#
 public abstract class FlurlClientFactoryBase : IFlurlClientFactory
@@ -118,7 +118,7 @@ public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 }
 ```
 
-`FlurlClientFactory` can only be set at the global level or on an `HttpTest`. (`IFlurlClientFactory` is also [useful]({{ site.baseurl }}/client-lifetime) in conjuction with IoC containers.)
+`FlurlClientFactory` can only be set at the global level or on an `HttpTest`. (`IFlurlClientFactory` is also [useful](client-lifetime) in conjuction with IoC containers.)
 
 ### Serializers
 

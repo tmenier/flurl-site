@@ -14,7 +14,7 @@ var data = await "http://api.com/endpoint".GetJsonAsync();
 
 ### Managing Instances Explicitly
 
-`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. (It implements `IDisposable`, and when disposed will also dispose `HttpClient`.) `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Cookies`, `Settings`, and many of the [fluent methods]({{ site.baseurl }}/fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
+`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. (It implements `IDisposable`, and when disposed will also dispose `HttpClient`.) `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Cookies`, `Settings`, and many of the [fluent methods](fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
 
 So if you want to use Flurl's goodness while maintaining tight control over `HttpClient` instances and their lifetime, `FlurlClient` is the object to use. The `Request` method (new in 2.0) is the preferred way to begin fluently building, configuring and making a call off a `FlurlClient`.
 

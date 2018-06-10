@@ -11,4 +11,4 @@ var result = await "https://api.com"
     .ReceiveJson<Person>();
 ````
 
-### With a discoverable API, [extensibility](extensibility) at every turn, and a nifty set of [testing features](testable-http), Flurl is intended to make building and calling URLs easy and downright fun.
+### With a discoverable API, [extensibility](docs/extensibility) at every turn, and a nifty set of [testing features](docs/testable-http), Flurl is intended to make building and calling URLs easy and downright fun.

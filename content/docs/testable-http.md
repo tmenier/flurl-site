@@ -108,4 +108,4 @@ Here again, you have lower-level access when the fluent methods aren't enough. I
 Assert.That(httpTest.CallLog.Any(call => /* check an HttpCall */));
 ````
 
-CallLog is an instance of `List<HttpCall>`. An `HttpCall` object contains lots of useful information as sepcified [here]({{ site.baseurl }}/fluent-http/#httpcall).
+`CallLog` is an instance of `List<HttpCall>`. An `HttpCall` object contains lots of useful information as sepcified [here](configuration/#event-handlers).

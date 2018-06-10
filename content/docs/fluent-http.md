@@ -1,6 +1,6 @@
 ## Fluent HTTP
 
-Flurl allows you to perform many common HTTP tasks directly off the fluent URL builder chain. Barely under the hood is [HttpClient](http://blogs.msdn.com/b/henrikn/archive/2012/02/11/httpclient-is-here.aspx) and related classes. As you'll see, Flurl enhances HttpClient with convenience methods and fluent goodness but doesn't try to abstract it away completely.
+Flurl allows you to perform many common HTTP tasks directly off the fluent URL builder chain. Barely under the hood is [HttpClient](https://msdn.microsoft.com/en-us/library/system.net.http.httpclient.aspx) and related classes. As you'll see, Flurl enhances `HttpClient` with convenience methods and fluent goodness but doesn't try to abstract it away completely.
 
 ```c#
 using Flurl;
