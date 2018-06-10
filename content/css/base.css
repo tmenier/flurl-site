@@ -55,6 +55,26 @@ body .col-md-9 {
   background-color: #252525;
   color: #fc0;
 }
+.navbar-footer .navbar-nav {
+  width: 100%;
+}
+.navbar-footer .navbar-nav .nav-prev {
+  float: left;
+}
+.navbar-footer .navbar-nav .nav-next {
+  float: right;
+}
+.navbar-footer .navbar-nav > li > a {
+  color: #dfdfdf;
+}
+.navbar-footer .navbar-nav > li > a .fa {
+  margin: 0 6px;
+}
+.navbar-footer .navbar-nav > li > a:hover,
+.navbar-footer .navbar-nav > li > a:focus {
+  color: #fc0;
+  background-color: #252525;
+}
 /* toc */
 .bs-sidebar.well {
   background-color: #333;

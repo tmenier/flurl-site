@@ -70,6 +70,30 @@ body {
   }
 }
 
+.navbar-footer {
+  .navbar-nav {
+    width: 100%;
+
+    .nav-prev {
+      float: left;
+    }
+    .nav-next {
+      float: right;
+    }
+    >li>a {
+      color: @white;
+      .fa {
+        margin: 0 6px;
+      }
+    }
+    >li>a:hover,
+    >li>a:focus {
+      color: @yellow;
+      background-color: @charcoal;
+    }  
+  }    
+}
+
 /* toc */
 .bs-sidebar.well {
   background-color: @gray;
