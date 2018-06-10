@@ -74,6 +74,12 @@ body .col-md-9 {
   color: #fc0;
   background-color: inherit;
 }
+.search-box {
+  background-color: #333;
+}
+.search-box .form-control:focus {
+  border-color: #191919;
+}
 /* next/prev links */
 .navbar-footer .navbar-nav {
   width: 100%;
