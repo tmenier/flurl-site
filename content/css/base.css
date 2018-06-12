@@ -5,7 +5,8 @@ body {
   padding-top: 70px;
 }
 body a,
-body a:hover {
+body a:hover,
+body a:visited {
   color: #fc0;
 }
 body .col-md-3 {
@@ -40,7 +41,9 @@ body .col-md-9 {
   background-color: #191919;
   outline: none;
 }
-.navbar .navbar-nav > li > a {
+.navbar .navbar-nav > li > a,
+.navbar .navbar-nav > li > a:visited {
+  color: #dfdfdf;
   padding: 14px 15px;
 }
 .navbar .navbar-nav > li > a:hover {
@@ -112,9 +115,11 @@ body .col-md-9 {
 .well ul li {
   list-style: none;
 }
-.well ul li a {
+.well ul li a,
+.well ul li a:visited {
   display: block;
   color: #dfdfdf;
+  background-color: #333;
   border-right: 2px solid #333;
 }
 .well ul li a:hover {
