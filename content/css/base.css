@@ -102,67 +102,69 @@ body .col-md-9 {
   background-color: #252525;
 }
 /* toc */
-.bs-sidebar.well {
+.well {
   background-color: #333;
   padding: 6px 0;
 }
-.bs-sidebar.well ul {
+.well ul {
   padding-left: 0;
 }
-.bs-sidebar.well ul li {
+.well ul li {
   list-style: none;
 }
-.bs-sidebar.well ul li a {
+.well ul li a {
   display: block;
   color: #dfdfdf;
   border-right: 2px solid #333;
 }
-.bs-sidebar.well ul li a:hover {
+.well ul li a:hover {
   color: #fc0;
   text-decoration: none;
   background-color: #252525;
 }
-.bs-sidebar.well ul li.sub a {
+.well ul li.sub a {
   padding: 5px 20px 5px 35px;
 }
-.bs-sidebar.well ul li.active a,
-.bs-sidebar.well ul li:hover a {
+.well ul li.active a,
+.well ul li:hover a {
   color: #fc0;
   border-right: 2px solid #fc0;
 }
-/* home page (hide TOC, etc) */
-body.homepage .col-md-3 {
+/* home page */
+body.homepage {
+  /* hide TOC */
+}
+body.homepage .container > .col-md-3 {
   display: none;
 }
-body.homepage .col-md-9 {
-  width: 100%;
+body.homepage .container > .col-md-9 {
+  width: 90%;
 }
-body.homepage pre code {
-  font-size: 18px;
+body.homepage a.headerlink {
+  display: none;
 }
-/* Show and affix the side nav when space allows it */
-@media (max-width: 991px) {
-  .col-md-3 {
-    display: none;
-  }
-  .navbar-fixed-top {
-    position: absolute;
-  }
+body.homepage .well {
+  margin: 10px 0 0 0;
+  padding: 0;
 }
-@media (min-width: 992px) {
-  .bs-sidebar {
-    width: 213px;
-  }
+body.homepage .well div {
+  text-align: center;
+  padding: 10px;
 }
-@media (min-width: 1200px) {
-  .bs-sidebar {
-    width: 263px;
-  }
+body.homepage .well div i.fa {
+  margin-right: 4px;
+}
+h1 {
+  font-size: 48px;
+  font-weight: 100;
+}
+h2,
+h3 {
+  font-size: 24px;
 }
 h2 a.headerlink,
 h3 a.headerlink {
   visibility: hidden;
-  font-size: 24px;
   margin-left: 12px;
 }
 h2:hover a.headerlink,
@@ -205,4 +207,26 @@ blockquote {
   height: 70px;
   pointer-events: none;
   animation: 0s 1s forwards collapse-anchor-padding-1;
+}
+/* Show and affix the side nav when space allows it */
+@media (max-width: 991px) {
+  .col-md-3 {
+    display: none;
+  }
+  .navbar-fixed-top {
+    position: absolute;
+  }
+  h1 {
+    font-size: 33px;
+  }
+}
+@media (min-width: 992px) {
+  .bs-sidebar {
+    width: 213px;
+  }
+}
+@media (min-width: 1200px) {
+  .bs-sidebar {
+    width: 263px;
+  }
 }

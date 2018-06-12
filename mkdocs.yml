@@ -14,7 +14,6 @@ extra_css:
 pages:
 - Home: index.md
 - Docs:
-    - Installation: docs/installation.md
     - Fluent URL building: docs/fluent-url.md
     - Fluent HTTP: docs/fluent-http.md
     - Testable HTTP: docs/testable-http.md
@@ -26,3 +25,4 @@ pages:
 markdown_extensions:
     - toc:
         permalink: ☍
+    - extra

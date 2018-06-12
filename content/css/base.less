@@ -126,7 +126,7 @@ body {
 }
 
 /* toc */
-.bs-sidebar.well {
+.well {
   background-color: @gray;
   padding: 6px 0;
 
@@ -159,43 +159,44 @@ body {
   }
 }
 
-/* home page (hide TOC, etc) */
+/* home page */
 body.homepage {
-  .col-md-3 {
+  /* hide TOC */
+  .container>.col-md-3 {
     display: none;
   }
-  .col-md-9 {
-    width: 100%;
+  .container>.col-md-9 {
+    width: 90%;
   }
-  pre code {
-    font-size: 18px;
+  a.headerlink {
+    display: none;
   }
+
+  .well {
+    margin: 10px 0 0 0;
+    padding: 0;
+
+    div {
+      text-align: center;
+      padding: 10px;  
+
+      i.fa {
+        margin-right: 4px;
+      }
+    }
+  }  
 }
 
-/* Show and affix the side nav when space allows it */
-@media (max-width: 991px) {
-  .col-md-3 {
-    display: none;
-  }
-  .navbar-fixed-top {
-    position: absolute;
-  }
-}
-@media (min-width: 992px) {
-  .bs-sidebar {
-      width: 213px;
-  }
-}
-@media (min-width: 1200px) {
-  .bs-sidebar {
-    width: 263px;
-  }
+h1 {
+  font-size: 48px;
+  font-weight: 100;
 }
 
 h2, h3 {
+  font-size: 24px;
+
   a.headerlink {
     visibility: hidden;
-    font-size: 24px;
     margin-left: 12px;
   }
 }
@@ -249,4 +250,27 @@ blockquote {
   height: 70px;
   pointer-events: none;
   animation: 0s 1s forwards collapse-anchor-padding-1;
+}
+
+/* Show and affix the side nav when space allows it */
+@media (max-width: 991px) {
+  .col-md-3 {
+    display: none;
+  }
+  .navbar-fixed-top {
+    position: absolute;
+  }
+  h1 {
+    font-size: 33px;
+  }
+}
+@media (min-width: 992px) {
+  .bs-sidebar {
+      width: 213px;
+  }
+}
+@media (min-width: 1200px) {
+  .bs-sidebar {
+    width: 263px;
+  }
 }
