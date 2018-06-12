@@ -5,6 +5,8 @@ site_author: Todd Menier
 repo_url: https://github.com/tmenier/Flurl
 edit_uri: ''
 
+google_analytics: ['UA-120797205-1', 'auto']
+
 theme:
     name: flatly
     custom_dir: theme
