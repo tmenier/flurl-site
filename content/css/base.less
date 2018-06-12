@@ -75,20 +75,20 @@ body {
 .dropdown-menu {
   background-color: @gray;
 
-  >li, >li.active {
-    >a {
-      color: @white;
-      padding: 8px 25px;
+  li, li.active {
+    a {
+      color: @white !important;
+      padding: 8px 25px !important;
     }
-    >a:hover, >a:focus {
-      color: @yellow;
-      background-color: @charcoal;
+    a:hover, a:focus {
+      color: @yellow !important;
+      background-color: @charcoal !important;
     }
   }
 
-  >li.active>a {
-    color: @yellow;
-    background-color: inherit;
+  li.active>a {
+    color: @yellow !important;
+    background-color: @gray !important;
   }
 }
 

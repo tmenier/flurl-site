@@ -61,21 +61,21 @@ body .col-md-9 {
 .dropdown-menu {
   background-color: #333;
 }
-.dropdown-menu > li > a,
-.dropdown-menu > li.active > a {
-  color: #dfdfdf;
-  padding: 8px 25px;
+.dropdown-menu li a,
+.dropdown-menu li.active a {
+  color: #dfdfdf !important;
+  padding: 8px 25px !important;
 }
-.dropdown-menu > li > a:hover,
-.dropdown-menu > li.active > a:hover,
-.dropdown-menu > li > a:focus,
-.dropdown-menu > li.active > a:focus {
-  color: #fc0;
-  background-color: #252525;
+.dropdown-menu li a:hover,
+.dropdown-menu li.active a:hover,
+.dropdown-menu li a:focus,
+.dropdown-menu li.active a:focus {
+  color: #fc0 !important;
+  background-color: #252525 !important;
 }
-.dropdown-menu > li.active > a {
-  color: #fc0;
-  background-color: inherit;
+.dropdown-menu li.active > a {
+  color: #fc0 !important;
+  background-color: #333 !important;
 }
 .search-box {
   background-color: #333;
