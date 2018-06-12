@@ -38,7 +38,7 @@ using (var httpTest = new HttpTest()) {
 
 <div markdown="1" class="col-md-4">
 ### <i class="fa fa-cloud-download"></i> Get It
-For just the URL builder, install [Flurl](https://www.nuget.org/packages/Flurl/) from NuGet. For everything else, install [Flurl.Http](https://www.nuget.org/packages/Flurl.Http/).
+For just the URL builder, install [Flurl](https://www.nuget.org/packages/Flurl/). For everything else, install [Flurl.Http](https://www.nuget.org/packages/Flurl.Http/).
 </div>
 
 <div markdown="1" class="col-md-4">
