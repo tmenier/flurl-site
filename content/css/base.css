@@ -1,3 +1,4 @@
+/* on/off to show or hide content in announcement.html */
 body {
   background-color: #252525;
   color: #dfdfdf;
@@ -15,6 +16,9 @@ body .col-md-3 {
 body .col-md-9 {
   padding: 0;
   margin-top: -20px;
+}
+body .announcement {
+  display: none;
 }
 /* top nav */
 .navbar {
@@ -225,6 +229,12 @@ blockquote {
   }
   h1 {
     font-size: 33px;
+  }
+  body {
+    padding-top: 70px;
+  }
+  body .announcement {
+    display: none;
   }
 }
 @media (min-width: 992px) {
