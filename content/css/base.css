@@ -144,20 +144,21 @@ body.homepage .container > .col-md-3 {
 }
 body.homepage .container > .col-md-9 {
   width: 100%;
-  padding: 0 28px;
 }
 body.homepage a.headerlink {
   display: none;
 }
+body.homepage h2,
+body.homepage h3 {
+  margin: 12px 0;
+}
 body.homepage .well {
-  margin: 10px 0 0 0;
-  padding: 0;
-}
-body.homepage .well div {
   text-align: center;
+  margin: 10px 0;
   padding: 10px;
+  height: 132px;
 }
-body.homepage .well div i.fa {
+body.homepage .well i.fa {
   margin-right: 4px;
 }
 h1 {
