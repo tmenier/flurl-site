@@ -45,7 +45,7 @@ using (var httpTest = new HttpTest()) {
 
 <div class="col-md-4"><div class="well">
 <h3><i class="fa fa-book"></i> Learn It</h3>
-<p>You've come to the right place. Check out the <a href="http://127.0.0.1:8000/docs/fluent-url/">docs</a>.</p>
+<p>You've come to the right place. Check out the <a href="docs/fluent-url/">docs</a>.</p>
 </div></div>
 
 <div class="col-md-4"><div class="well">
