@@ -16,7 +16,7 @@ extra_css:
 pages:
 - Home: index.md
 - Docs:
-    - Fluent URL building: docs/fluent-url.md
+    - Fluent URL Building: docs/fluent-url.md
     - Fluent HTTP: docs/fluent-http.md
     - Testable HTTP: docs/testable-http.md
     - Configuration: docs/configuration.md
