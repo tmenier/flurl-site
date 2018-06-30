@@ -10,7 +10,7 @@ var person = await "https://api.com"
     .WithOAuthBearerToken("my_oauth_token")
     .PostJsonAsync(new
     {
-        first_name = "Frank",
+        first_name = "Claire",
         last_name = "Underwood"
     })
     .ReceiveJson<Person>();
