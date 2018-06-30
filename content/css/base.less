@@ -1,5 +1,5 @@
 /* on/off to show or hide content in announcement.html */
-@announcement: 'off';
+@announcement: 'on';
 
 @charcoal: #252525;
 @gray: #333;
@@ -27,15 +27,15 @@ body {
 }
 
 body when (@announcement = 'on') {
-  padding-top: 108px;
+  padding-top: 100px;
 
   .announcement {
     display: block;
     color: #0a3e6e;
     background-color: #ffd;
     text-align: center;
-    height: 42ppx;
-    padding: 10px;
+    height: 34px;
+    padding: 6px;
 
     a, a:hover, a:active, a:visited {
       color: #0a3e6e;
