@@ -74,6 +74,7 @@ using (var httpTest = new HttpTest()) {
 Flurl is truly a community effort. Special thanks to the following contributors:
 
 - [Kroniak](https://github.com/kroniak) for incredible work on cross-platform support, [automating the build](https://ci.appveyor.com/project/kroniak/flurl/branch/master) and making improvements to the project structure and processes.
+- [Carolyn Van Slyck](https://github.com/carolynvs) and [Nathan Ellenfield](https://github.com/ellenfieldn) for creating and (automatically!) maintaining [signed](https://www.nuget.org/packages/Flurl.Signed/) [packages](https://www.nuget.org/packages/Flurl.Http.Signed/) for Flurl and Flurl.Http.
 - [Luk Vermeulen](https://github.com/lvermeulen) for creating and maintaining [Flurl.Http.Xml](https://github.com/lvermeulen/Flurl.Http.Xml).
 - [Mike Hachen](https://twitter.com/mike_hachen), [Chad Jessup](https://twitter.com/ChadJessup), and [Jon Galloway](https://twitter.com/jongalloway) (on behalf of the [.NET Foundation](https://dotnetfoundation.org/)) for their generous [donations](https://www.gofundme.com/new-domain-for-flurl) to cover the costs of flurl.io for years to come.
 </div>
