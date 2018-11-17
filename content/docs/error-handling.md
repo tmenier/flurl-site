@@ -34,7 +34,7 @@ catch (FlurlHttpException ex) {
 
 ### Allowing Non-2XX Responses
 
-You can allow addtional HTTP statuses (i.e. prevent throwing) fluently per request:
+You can allow additional HTTP statuses (i.e. prevent throwing) fluently per request:
 
 ```c#
 url.AllowHttpStatus(HttpStatusCode.NotFound, HttpStatusCode.Conflict).GetAsync();
