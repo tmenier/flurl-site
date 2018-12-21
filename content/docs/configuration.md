@@ -28,13 +28,13 @@ FlurlClientFactory      |         x          |    x     |              |
 
 A couple important things to note about `Settings` behavior:
 
-- The hierarchy is never actually "flattened"; properties are always aware of what level they inherited their value from, and will continue to reflect changes made at a higher level. For example, if you have a `FlurlRequest` that has inheritted the global `Timeout` setting, _then_ a `FlurlClient` is attached that has its own `Timeout` setting, `request.Settings.Timeout` will now reflect the client-level setting. But if `Timeout` were set _explicitly_ at the request level, that value will always stick.
+- The hierarchy is never actually "flattened"; properties are always aware of what level they inherited their value from, and will continue to reflect changes made at a higher level. For example, if you have a `FlurlRequest` that has inherited the global `Timeout` setting, _then_ a `FlurlClient` is attached that has its own `Timeout` setting, `request.Settings.Timeout` will now reflect the client-level setting. But if `Timeout` were set _explicitly_ at the request level, that value will always stick.
 
 - An _explicitly set_ value will always override an inherited default, including `null`. (Dictionaries are used internally, and key existence dictates whether a value is set at that level, not a null/default value check.)
 
 ### Configuring Settings
 
-`Settings` properties are all read/write, but if you want to change mutiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
+`Settings` properties are all read/write, but if you want to change multiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
 
 Configure global defaults:
 
@@ -105,7 +105,7 @@ Note that custom HttpClient factories are _not_ the recommended place to control
 
 ### FlurlClientFactory
 
-`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call the `Url`. The implemetation registered globally is `PerHostUrl` which, as discussed [here](client-lifetime), uses a single cached instance of `FlurlClient` per host being called for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on a Url, without having to implement the cache itself.
+`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call the `Url`. The implementation registered globally is `PerHostUrl` which, as discussed [here](client-lifetime), uses a single cached instance of `FlurlClient` per host being called for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on a Url, without having to implement the cache itself.
 
 ```c#
 public abstract class FlurlClientFactoryBase : IFlurlClientFactory
@@ -133,7 +133,7 @@ public interface ISerializer
 }
 ```
 
-Both have a default implementation registered globally, and replacing them is possible but not common. The default `JsonSerializer` implementation is `NewtonsoftJsonSerializer` that, as you probably guessed, uses the ever popular [Json.NET](https://www.newtonsoft.com/json) library. Although it's unlikely that you'd want to _replace_ this implementation, note that it's constructor takes a `Newtonsoft.Json.JsonSerializerSettings` argument, which is a nice hook for tapping into the many [custom serialization settings](https://www.newtonsoft.com/json/help/html/SerializationSettings.htm) that library offers:
+Both have a default implementation registered globally, and replacing them is possible but not common. The default `JsonSerializer` implementation is `NewtonsoftJsonSerializer` that, as you probably guessed, uses the ever popular [Json.NET](https://www.newtonsoft.com/json) library. Although it's unlikely that you'd want to _replace_ this implementation, note that its constructor takes a `Newtonsoft.Json.JsonSerializerSettings` argument, which is a nice hook for tapping into the many [custom serialization settings](https://www.newtonsoft.com/json/help/html/SerializationSettings.htm) that library offers:
 
 ```c#
 FlurlHttp.Configure(settings => {
@@ -169,7 +169,7 @@ public class HttpCall
 }
 ```
 
-`FlurlRequest` provides many Flurl.Http-specific objects like `Url`, `FlurlClient`, and `Settings` assocaited with the request. Many of the other properties are lower-level objects from the `System.Net.Http` world. Not surprisingly, response-related properties will be `null` in `BeforeCall`. `AfterCall` fires after both successful and failed requests. `ExceptionHandled` is useful in `OnError` to prevent exceptions from bubbling up. Here's an example of registering a global async error handler:
+`FlurlRequest` provides many Flurl.Http-specific objects like `Url`, `FlurlClient`, and `Settings` associated with the request. Many of the other properties are lower-level objects from the `System.Net.Http` world. Not surprisingly, response-related properties will be `null` in `BeforeCall`. `AfterCall` fires after both successful and failed requests. `ExceptionHandled` is useful in `OnError` to prevent exceptions from bubbling up. Here's an example of registering a global async error handler:
 
 ```c#
 private async Task HandleFlurlErrorAsync(HttpCall call) {
