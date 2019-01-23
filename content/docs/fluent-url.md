@@ -15,7 +15,7 @@ var url = "http://www.some-api.com"
 	.SetFragment("after-hash");
 ````
 
-This example (and most on this site) uses an extension method off `string` to implicitly create a `Url` object. You can do exactly the same explicitly if you prefer:
+This example (and most on this site) uses an extension method of `string` to implicitly create a `Url` object. You can do exactly the same explicitly if you prefer:
 
 ````c#
 var url = new Url("http://www.some-api.com").AppendPathSegment(...
@@ -125,7 +125,7 @@ string EncodeQueryParamValue(object value, bool encodeSpaceAsPlus);
 string EncodeIllegalCharacters(string urlPart);
 ````
 
-`QueryParamCollection` implents `IList` and maintains the order of parameters, but it also supports indexing by name like a dictionary. If the same parameter name appears mutiple times in the list, an array is returned.
+`QueryParamCollection` implements `IList` and maintains the order of parameters, but it also supports indexing by name like a dictionary. If the same parameter name appears mutiple times in the list, an array is returned.
 
 ````c#
 var url = new Url("http://foo.com?x=1&x=2");
