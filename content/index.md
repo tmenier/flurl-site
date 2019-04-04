@@ -55,7 +55,7 @@ using (var httpTest = new HttpTest()) {
 
 <div class="col-md-4"><div class="well">
 <h3><i class="fa fa-github"></i> Report an Issue</h3>
-<p>To report a bug or request a feature, <a href="https://github.com/tmenier/Flurl/issues/new">open an issue</a> on GitHub.</p>
+<p>To report a bug or request a feature, <a href="https://github.com/tmenier/Flurl/issues/new/choose">open an issue</a> on GitHub.</p>
 </div></div>
 
 <div class="col-md-4"><div class="well">
