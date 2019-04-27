@@ -1,4 +1,4 @@
 # https://www.netlify.com/docs/redirects
-http://flurl.netlify.com/* https://flurl.io/:splat 301!
-https://flurl.netlify.com/* https://flurl.io/:splat 301!
-http://flurl.io/* https://flurl.io/:splat 301!
+https://flurl.io/* https://flurl.dev/:splat 301!
+https://www.flurl.io/* https://flurl.dev/:splat 301!
+https://flurl.netlify.com/* https://flurl.dev/:splat 301!
