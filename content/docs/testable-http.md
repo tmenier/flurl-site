@@ -14,7 +14,7 @@ public void Test_Some_Http_Calling_Method() {
 }
 ````
 
-Most unit testing frameworks have some notion of setup/teardown methods that are executed before/after each test. For classes with lots of tests against HTTP-calling code, you might prefer this approach:
+Most unit testing frameworks have some notion of setup/teardown methods that are executed before/after each test *. For classes with lots of tests against HTTP-calling code, you might prefer this approach:
 
 ````c#
 private HttpTest _httpTest;
@@ -34,6 +34,8 @@ public void Test_Some_Http_Calling_Method() {
     // Flurl is in test mode
 }
 ````
+
+\* _**Important note:** Due to a [known issue](https://github.com/tmenier/Flurl/issues/375) with the mechansim for flowing the test context into the test subject, instantiating `HttpTest` from an **async** setup method will not work._
 
 ### Arrange
 
