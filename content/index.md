@@ -23,7 +23,7 @@ var person = await "https://api.com"
 // fake & record all http calls in the test subject
 using (var httpTest = new HttpTest()) {
     // arrange
-    httpTest.RespondWith(200, "OK");
+    httpTest.RespondWith("OK", 200);
     // act
     await sut.CreatePersonAsync();
     // assert
