@@ -55,8 +55,8 @@ httpTest.RespondWithJson(new { x = 1, y = 2 });
 Test failure conditions:
 
 ````c#
-httpTest.RespondWith(500, "server error");
-httpTest.RespondWithJson(401, new { message = "unauthorized" });
+httpTest.RespondWith("server error", 500);
+httpTest.RespondWithJson(new { message = "unauthorized" }, 401);
 httpTest.SimulateTimeout();
 ````
 
@@ -66,7 +66,7 @@ httpTest.SimulateTimeout();
 httpTest
     .RespondWith("some response body")
     .RespondWithJson(someObject)
-    .RespondWith(500, "error!");
+    .RespondWith("error!", 500);
     
 sut.DoThingThatMakesSeveralHttpCalls();
 ````
