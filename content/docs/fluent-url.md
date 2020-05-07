@@ -43,7 +43,7 @@ Flurl takes care of encoding characters in URLs but takes a different approach w
 - For path segments, *illegal* characters such as spaces are encoded.
 - For path segments, the `?` character is encoded, since query strings get special treatment.
 
-In some cases, you might want to set a query parameter that you to know to be already encoded. `SetQueryParam` has optional `isEncoded` argument:
+In some cases, you might want to set a query parameter that you know to be already encoded. `SetQueryParam` has optional `isEncoded` argument:
 
 ````c#
 url.SetQueryParam("x", "don%27t%20touch%20me", true);
