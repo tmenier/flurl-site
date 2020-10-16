@@ -20,6 +20,24 @@ body .col-md-12 {
 body .announcement {
   display: none;
 }
+body {
+  padding-top: 100px;
+}
+body .announcement {
+  display: block;
+  color: #0a3e6e;
+  background-color: #ffd;
+  text-align: center;
+  height: 34px;
+  padding: 6px;
+}
+body .announcement a,
+body .announcement a:hover,
+body .announcement a:active,
+body .announcement a:visited {
+  color: #0a3e6e;
+  text-decoration: underline;
+}
 /* top nav */
 .navbar {
   border: none;
