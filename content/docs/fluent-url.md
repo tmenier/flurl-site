@@ -34,7 +34,7 @@ Builder methods and their overloads are highly discoverable, intuitive, and alwa
 
 ### Parsing
 
-In addition to building URLs, `Flurl.Url` is effective at picking apart an existing one:
+In addition to building URLs, `Flurl.Url` is effective at decomposing an existing one:
 
 ```c#
 var url = new Url("https://user:pass@www.mysite.com:1234/with/path?x=1&y=2#foo");
@@ -66,6 +66,12 @@ Assert.AreEqual("1", url.QueryParams.FirstOrDefault("x"));
 Assert.AreEqual(new[] { "2", "3" }, url.QueryParams.GetAll("y"));
 ```
 
+### Mutability
+
+A `Url` is effectively a mutable builder object that implicitly converts to a string. If you need an immutable URL, such as a base URL as a member variable of a class, a common patter is to type it as a `String`. Methods that need to build off of it can do so using string extension methods, thereby implicitly creating a new `Url` object each time (which is cheap) and adding no more keystrokes than if were typed as a `Url` to begin with. The difference is the original string remains unmodified.
+
+Another way to get around the mutable nature of `Url` when needed is to use the `Clone()` method, which simply creates and exact copy of the current `Url`.
+
 ### Encoding
 
 Flurl takes care of encoding characters in URLs but takes a different approach with path segments than it does with query string values. The assumption is that query string values are highly variable (such as from user input), whereas path segments tend to be more "fixed" and may already be encoded, in which case you don't want to double-encode. Here are the rules Flurl follows:
@@ -88,12 +94,6 @@ var url = "http://foo.com".SetQueryParam("x", "hi there");
 Assert.AreEqual("http://foo.com?x=hi%20there", url.ToString());
 Assert.AreEqual("http://foo.com?x=hi+there", url.ToString(true));
 ```
-
-### Mutability
-
-A `Url` is effectively a mutable builder object that implicitly converts to a string. If you need an immutable URL, such as a base URL as a member variable of a class, a common patter is to type it as a `String`. Methods that need to build off of it can do so using string extension methods, thereby implicitly creating a new `Url` object each time (which is cheap) and adding no more keystrokes than if were typed as a `Url` to begin with. The difference is the original string remains unmodified.
-
-Another way to get around the mutable nature of `Url` when needed is to use the `Clone()` method, which simply creates and exact copy of the current `Url`.
 
 ### Utility Methods
 
