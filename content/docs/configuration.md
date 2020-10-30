@@ -1,40 +1,38 @@
 ## Configuration
 
-Flurl.Http defines a `Settings` property at 4 levels, each overriding the previous level in this order:
+Flurl.Http behavior is configurable via a hierarchical system of settings objects, each inheriting/overriding the previous in this order:
 
-- `FlurlHttp` (global)
-- `IFlurlClient`
-- `IFlurlRequest`
-- `HttpTest`
+- `FlurlHttp.GlobalSettings` (static)
+- `IFlurlClient.Settings`
+- `IFlurlRequest.Settings`
+- `HttpTest.Settings` (configured test settings always "win")
 
-Properties of `Settings` are mostly the same at all 4 levels, with a few exceptions. Here's a complete list along with where they are and are not supported:
+Available properties are mostly the same at all 4 levels, with a few exceptions. Here's a complete list along with where they are and are not supported:
 
 Property                | FlurlHttp (global) | HttpTest | IFlurlClient | IFlurlRequest
 ------------------------|:------------------:|:--------:|:------------:|:-------------:
 Timeout                 |         x          |    x     |      x       |       x         
 AllowedHttpStatusRange  |         x          |    x     |      x       |       x         
-CookiesEnabled          |         x          |    x     |      x       |       x         
 JsonSerializer          |         x          |    x     |      x       |       x         
 UrlEncodedSerializer    |         x          |    x     |      x       |       x         
+Redirects               |         x          |    x     |      x       |       x         
 BeforeCall              |         x          |    x     |      x       |       x         
 BeforeCallAsync         |         x          |    x     |      x       |       x         
 AfterCall               |         x          |    x     |      x       |       x         
 AfterCallAsync          |         x          |    x     |      x       |       x         
 OnError                 |         x          |    x     |      x       |       x         
 OnErrorAsync            |         x          |    x     |      x       |       x         
+OnRedirect              |         x          |    x     |      x       |       x         
+OnRedirectAsync         |         x          |    x     |      x       |       x         
 ConnectionLeaseTimeout  |         x          |    x     |      x       |                 
 HttpClientFactory       |         x          |    x     |      x       |                 
-FlurlClientFactory      |         x          |    x     |              |                 
+FlurlClientFactory      |         x          |          |              |                 
 
-A couple important things to note about `Settings` behavior:
-
-- The hierarchy is never actually "flattened"; properties are always aware of what level they inherited their value from, and will continue to reflect changes made at a higher level. For example, if you have a `FlurlRequest` that has inheritted the global `Timeout` setting, _then_ a `FlurlClient` is attached that has its own `Timeout` setting, `request.Settings.Timeout` will now reflect the client-level setting. But if `Timeout` were set _explicitly_ at the request level, that value will always stick.
-
-- An _explicitly set_ value will always override an inherited default, including `null`. (Dictionaries are used internally, and key existence dictates whether a value is set at that level, not a null/default value check.)
+Note that only the *absence* of explicitly setting a value signals to inherit from up the hierarchy. `null` means `null`, not inherit. (Settings are dictionary-backed, and internally the existence of a key dictates whether to inherit, not a null/default value check.)
 
 ### Configuring Settings
 
-`Settings` properties are all read/write, but if you want to change mutiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
+`Settings` properties are all read/write, but if you want to change multiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
 
 Configure global defaults:
 
@@ -68,9 +66,18 @@ Override any settings from within a [test](testable-http), regardless what level
 httpTest.Configure(settings => ...);
 ```
 
+If needed, you can revert settings at any level back to their default or inherited values:
+
+```c#
+flurlClient.Settings.ResetDefaults();
+FlurlHttp.GlobalSettings.ResetDefaults();
+```
+
 Let's take a look at some specific settings.
 
 ### HttpClientFactory
+
+*(Not to be confused with .NET Core's [IHttpClientFactory](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.ihttpclientfactory); they are very different things (and Flurl's came first, in case you were wondering. :))*
 
 For advanced scenarios, you can customize the way Flurl.Http constructs `HttpClient` and `HttpMessageHandler` instances. Although it is only required that your custom factory implements `Flurl.Http.Configuration.IHttpClientFactory`, it is recommended to inherit from `DefaultHttpClientFactory` and extend only as needed.
 
@@ -85,7 +92,7 @@ public class MyCustomHttpClientFactory : DefaultHttpClientFactory
 }
 ```
 
-Register this globally:
+Register your factory globally:
 
 ```c#
 FlurlHttp.Configure(settings => {
@@ -101,11 +108,15 @@ var cli = new FlurlClient(BASE_URL).Configure(settings => {
 });
 ```
 
-Note that custom HttpClient factories are _not_ the recommended place to control caching/reusing of created instances. `FlurlClientFactory` is better suited for this.
+*A few words of caution:*
+
+1. Overriding `CreateMessageHandler` can very useful for configuring things like proxies and client certificates, but some features that Flurl has re-implemented, such as cookies and redirects, require that the related settings on `HttpClientHandler` remain disabled in order to function properly. It's a best practice to call `base.CreateMessageHandler()` and configure and return that, rather than creating a new one yourself. If in doubt, [have a look at what Flurl does by default](https://github.com/tmenier/Flurl/blob/dev/src/Flurl.Http/Configuration/DefaultHttpClientFactory.cs) and avoid straying farther from that implementation than necessary.
+
+2. A custom `HttpClientFactory` should be concerned only with _creating_ these objects, not caching/reusing them. That's a concern of `FlurlClientFactory`.
 
 ### FlurlClientFactory
 
-`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call the `Url`. The implemetation registered globally is `PerHostUrl` which, as discussed [here](client-lifetime), uses a single cached instance of `FlurlClient` per host being called for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on a Url, without having to implement the cache itself.
+`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call that `Url`. The default implementation uses a single cached instance of `FlurlClient` per combination of the URL's host/scheme/port for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on the `Url`, without having to implement the cache itself.
 
 ```c#
 public abstract class FlurlClientFactoryBase : IFlurlClientFactory
@@ -118,7 +129,7 @@ public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 }
 ```
 
-`FlurlClientFactory` can only be set at the global level or on an `HttpTest`. (`IFlurlClientFactory` is also [useful](client-lifetime) in conjuction with IoC containers.)
+Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](client-lifetime) in conjunction dependency injection patterns.
 
 ### Serializers
 
@@ -133,7 +144,7 @@ public interface ISerializer
 }
 ```
 
-Both have a default implementation registered globally, and replacing them is possible but not common. The default `JsonSerializer` implementation is `NewtonsoftJsonSerializer` that, as you probably guessed, uses the ever popular [Json.NET](https://www.newtonsoft.com/json) library. Although it's unlikely that you'd want to _replace_ this implementation, note that it's constructor takes a `Newtonsoft.Json.JsonSerializerSettings` argument, which is a nice hook for tapping into the many [custom serialization settings](https://www.newtonsoft.com/json/help/html/SerializationSettings.htm) that library offers:
+Both have a default implementation registered globally, and replacing them is possible but not common. The default `JsonSerializer` implementation is `NewtonsoftJsonSerializer` that, as you probably guessed, uses the ever popular [Json.NET](https://www.newtonsoft.com/json) library. Although it's unlikely that you'd want to _replace_ this implementation, note that its constructor takes a `Newtonsoft.Json.JsonSerializerSettings` argument, which is a nice hook for tapping into the many [custom serialization settings](https://www.newtonsoft.com/json/help/html/SerializationSettings.htm) that library offers:
 
 ```c#
 FlurlHttp.Configure(settings => {
@@ -148,39 +159,70 @@ FlurlHttp.Configure(settings => {
 
 ### Event Handlers
 
-Keeping cross-cutting concerns like logging and error handling separated from your normal logic flow often results in cleaner code. Flurl.Http provides an event model for these scenarios. `BeforeCall`, `AfterCall`, `OnError`, and their `Async*` equivalents are typically defined at the global or client level, but can be defined per request if it makes sense. These settings each take an `Action<HttpCall>` delegate (`Func<HttpCall, Task>` for the async versions). `HttpCall` provides rich details about the call that you can act upon:
+Keeping cross-cutting concerns like logging and error handling separated from your normal logic flow often results in cleaner code. Flurl.Http provides an event model for these scenarios. `BeforeCall`, `AfterCall`, `OnError`, `OnRedirect`, and their `*Async` equivalents are typically defined at the global or client level, but can be defined per request if it makes sense. These settings each take an `Action<HttpCall>` delegate (`Func<HttpCall, Task>` for the async versions). `FlurlCall` provides rich details about the call that you can act upon:
 
 ```c#
-public class HttpCall
+public class FlurlCall
 {
-    public IFlurlRequest FlurlRequest { get; }
-    public HttpRequestMessage Request { get; }
+    public IFlurlRequest Request { get; set; }
+    public HttpRequestMessage HttpRequestMessage { get; set; }
+    public IFlurlResponse Response { get; set; }
+    public HttpResponseMessage HttpResponseMessage { get; set; }
     public string RequestBody { get; }
-    public HttpResponseMessage Response { get; }
-    public DateTime StartedUtc { get; }
-    public DateTime? EndedUtc { get; }
+    public FlurlRedirect Redirect { get; set; }
+    public FlurlCall RedirectedFrom { get; set; }
+    public Exception Exception { get; set; }
+    public bool ExceptionHandled { get; set; }
+    public DateTime StartedUtc { get; set; }
+    public DateTime? EndedUtc { get; set; }
     public TimeSpan? Duration { get; }
     public bool Completed { get; }
     public bool Succeeded { get; }
-    public HttpStatusCode? HttpStatus { get; }
-    public string ErrorResponseBody { get; }
-    public Exception Exception { get; }
-    public bool ExceptionHandled { get; set; }
 }
 ```
 
-`FlurlRequest` provides many Flurl.Http-specific objects like `Url`, `FlurlClient`, and `Settings` assocaited with the request. Many of the other properties are lower-level objects from the `System.Net.Http` world. Not surprisingly, response-related properties will be `null` in `BeforeCall`. `AfterCall` fires after both successful and failed requests. `ExceptionHandled` is useful in `OnError` to prevent exceptions from bubbling up. Here's an example of registering a global async error handler:
+Not surprisingly, response-related properties will be `null` in `BeforeCall`. `AfterCall` fires after both successful and failed requests. Setting `ExceptionHandled` to `true` in `OnError` prevents exceptions from bubbling up. Here's an example of registering a global async error handler:
 
 ```c#
 private async Task HandleFlurlErrorAsync(HttpCall call) {
     await LogErrorAsync(call.Exception.Message);
-    MessageBox.Show(call.Exception.Message);
     call.ExceptionHandled = true;
 }
 
 FlurlHttp.Configure(settings => settings.OnErrorAsync = HandleFlurlErrorAsync);
 ```
 
-### Reverting Settings Changes
+### Redirects
 
-As mentioned earlier, explicitly setting a value at any level means it will no longer inherit its default, even if that value is `null`. If you need to revert a setting, your only option is to revert them all using `Settings.ResetDefaults()`, which is available at any level.
+Like with `HttpClient`, Flurl automatically follows 3xx redirects by default. But the settings and hooks exposed by Flurl offer a greater level of configurability.
+
+```c#
+FlurlHttp.Configure(settings => {
+    settings.Redirects.Enabled = true; // default true
+    settings.Redirects.AllowSecureToInsecure = true; // default false
+    settings.Redirects.ForwardAuthorizationHeader = true; // default false
+    settings.Redirects.MaxAutoRedirects = 5; // default 10 (consecutive)
+});
+```
+
+You can also configure redirect behavior on a per-call basis using an event handler.
+
+```c#
+flurlClient.OnRedirect(call => {
+    if (call.Redirect.Count > 5) {
+        call.Redirect.Follow = false;
+    }
+    else {
+        log.WriteInfo($"redirecting from {call.Request.Url} to {call.Redirect.Url}");
+        call.Redirect.ChangeVerbToGet = (call.Response.Status == 301);
+        call.Redirect.Follow = true;
+    }
+});
+```
+
+If you just need to enable/disable auto-redirect for a single call, you can do it inline:
+
+```c#
+await url.WithAutoRedirect(false).GetAsync();
+```
+
