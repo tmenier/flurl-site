@@ -2,7 +2,7 @@
 
 *NOTE: Everything beyond URL building and parsing requires installing [Flurl.Http](https://www.nuget.org/packages/Flurl.Http/) rather than the base [Flurl](https://www.nuget.org/packages/Flurl/) package.*
 
-A pretty common way to think about HTTP is "I want to build a URL and then call it". Flurl.Http allow you to express that pretty concisely:
+A pretty common way to think about HTTP is "I want to build a URL and then call it." Flurl.Http allow you to express that pretty concisely:
 
 ```c#
 using Flurl;
@@ -53,11 +53,9 @@ Then there's the "write" verbs:
 
 ```c#
 await "http://api.foo.com".PostJsonAsync(new { a = 1, b = 2 });
-await "http://api.foo.com/1".PutStringAsync("hello");
-await "http://api.foo.com/1".PatchAsync(httpContent);
+await "http://api.foo.com/1".PatchJsonAsync(new { c = 3 });
+await "http://api.foo.com/2".PutStringAsync("hello");
 ```
-
-`Post*`, `Put*`, and `Patch*` methods each have `*Async`, `*StringAsync`, and `*JsonAsync` variations, allowing any combination of verb/content type. (In the above example, `httpContent` is of type [HttpContent](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpcontent) from the `HttpClient` stack, which gives you a lower-level way to specify a content format that is neither JSON nor a general string.)
 
 All of the methods above return a `Task<IFlurlResponse>`. You may of course expect some data to be returned in the response body:
 
@@ -67,11 +65,13 @@ dynamic d = await url.PutStringAsync(s).ReceiveJson();
 string s = await url.PatchJsonAsync(partial).ReceiveString();
 ```
 
-Weird verbs or content? Go down a level:
+Weird verbs or content? Go down a level or two:
 
 ```c#
+await url.PostAsync(content); // an HttpContent from the HttpClient stack
+await url.SendJsonAsync(HttpMethod.Trace, data);
 await url.SendAsync(
-    HttpMethod.Trace,
+    new HttpMethod("CONNECT"),
     httpContent, // optional
     cancellationToken,  // optional
     HttpCompletionOption.ResponseHeaderRead);  // optional
