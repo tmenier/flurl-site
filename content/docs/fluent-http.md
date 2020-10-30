@@ -11,7 +11,7 @@ using Flurl.Http;
 var result = await baseUrl.AppendPathSegment("endpoint").GetAsync();
 ```
 
-The above call sends a GET request and returns an `IFlurlResponse`, from which you can get properties such as `StatusCode`, `Headers`, and the body content via methods such as `GetStringAsync` and `GetJsonAsync<T>`.
+The above code sends a GET HTTP request and returns an `IFlurlResponse`, from which you can get properties such as `StatusCode`, `Headers`, and the body content via methods such as `GetStringAsync` and `GetJsonAsync<T>`.
 
 But often you just want to jump straight to the body, and Flurl provides a variety of shortcuts to do that:
 
