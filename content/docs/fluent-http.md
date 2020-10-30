@@ -2,7 +2,7 @@
 
 *NOTE: Everything beyond URL building and parsing requires installing [Flurl.Http](https://www.nuget.org/packages/Flurl.Http/) rather than the base [Flurl](https://www.nuget.org/packages/Flurl/) package.*
 
-A pretty common way to think about HTTP is "I want to build a URL and then call it." Flurl.Http allow you to express that pretty concisely:
+A pretty common way to think about interacting with an HTTP service is "I want to build a URL and then call it." Flurl.Http allows you to express that pretty concisely:
 
 ```c#
 using Flurl;
