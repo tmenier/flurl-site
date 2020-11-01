@@ -1,36 +1,32 @@
 ## Error Handling
 
-By default, Flurl.Http throws a `FlurlHttpException` on any non-2XX HTTP status.
+Unlike `HttpClient`, Flurl.Http throws on any non-2XX HTTP status by default. Here's the reasoning:
+
+1. Non-2XX conditions tend to be "exceptional", that is, they're not expected them under "normal" circumstances and logic flow, hence they fit the `try`/`catch` paradigm.
+
+2. Especially in JSON APIs, error response bodies tend to take a different shape than regular responses, and if you're using shortcuts like `url.GetJsonAsync<RegularShape>()`, Flurl's `try`/`catch` pattern provides a way to deserialize to something different in the `catch` block.
 
 ```c#
 try {
-    await url.PostJsonAsync(poco);
-}
-catch (FlurlHttpTimeoutException) {
-    // FlurlHttpTimeoutException derives from FlurlHttpException; catch here only
-    // if you want to handle timeouts as a special case
-    LogError("Request timed out.");
+    var result = await url.PostJsonAsync(poco).ReceiveJson<T>();
 }
 catch (FlurlHttpException ex) {
-    // ex.Message contains rich details, inclulding the URL, verb, response status,
-    // and request and response bodies (if available)
-    LogError(ex.Message);
+    var error = await ex.GetResponseJsonAsync<TError>();
+    logger.Write($"Error returned from {ex.Call.Request.Url}: {error.SomeDetails}");
 }
 ```
 
-To inspect individual details of the call, or to provide a custom error message, you do not need to parse the `Message` property. `FlurlHttpException` also contains a `Call` property, which is an instance of the same [FlurlCall object](configuration/#event-handlers) used by event handlers, providing a wealth of details about the call.
+The `Call` property above is an instance of the same [FlurlCall object](configuration/#event-handlers) used by event handlers, providing a wealth of details about the call. For simple logging and debugging, `FlurlHttpException.Message` gives you a handy summary of the error, including the URL, HTTP verb, and status code received.
 
-`FlurlHttpException` also provides shortcuts for deserializing JSON responses:
+`FlurlHttpException` also gives you a few shortcuts for deserializing the body:
  
 ```c#
-catch (FlurlHttpException ex) {
-    // For error responses that take a known shape
-    TError e = await ex.GetResponseJsonAsync<TError>();
-
-    // For error responses that take an unknown shape
-    dynamic d = await ex.GetResponseJsonAsync();
-}
+Task<string> GetResponseStringAsync();
+Task<T> GetResponseJsonAsync<T>();
+Task<dynamic> GetResponseJsonAsync();
 ```
+
+These are all short-hand for equivalent methods on `FlurlHttpException.Call.Response`, so you can go that route if you need something different, such as a stream.
 
 ### Timeouts
 
@@ -56,21 +52,20 @@ await url.WithTimeout(TimeSpan.FromMinutes(10)).GetAsync();
 
 ### Allowing Non-2XX Responses
 
-You can allow additional HTTP statuses (i.e. prevent throwing) fluently per request:
+If you don't like the default throwing behavior, you can change it at [any settings level](configuration) via `Settings.AllowedHttpStatusRange`. This is a string based setting that excepts wildcards, so if you never want to throw, set it to `*`.
+
+You can also allow non-2XX at the request level:
 
 ```c#
-url.AllowHttpStatus(HttpStatusCode.NotFound, HttpStatusCode.Conflict).GetAsync();
 url.AllowHttpStatus("400-404,6xx").GetAsync();
 url.AllowAnyHttpStatus().GetAsync();
 ```
 
-The pattern in the second example is fairly self-explanatory; allowed characters include digits, commas for separators, hyphens for ranges, and wildcards `x` or `X` or `*`.
-
-You can also override the default behavior at [any settings level](configuration) via `Settings.AllowedHttpStatusRange`, which also takes a string pattern. Note that unlike the fluent methods (which are additive), you must include `2XX` in this setting if you want to allow all statuses in that range.
+The pattern in the first example is fairly self-explanatory: allowed characters include digits, commas for separators, hyphens for ranges, and wildcards `x` or `X` or `*`. The syntactic rules are the same for `Settings.AllowedHttpStatusRange`. One difference is that the request-level settings are _additive_, so for example you don't have to include `2XX` in the request-level pattern if it's already allowed per the settings.
 
 ### Inspecting the Response Before Deserializing
 
-Non-2XX responses tend to be "exceptional", and the `try`/`catch` pattern above is a clean approach to dealing with them. However, if you prefer to check the HTTP status and act as part of the normal control flow, that's easy enough:
+If you prefer to handle non-2XX as part of the normal control flow, that's easy enough:
 
 ```c#
 var response = await url
