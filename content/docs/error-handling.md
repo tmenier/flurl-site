@@ -61,7 +61,7 @@ url.AllowHttpStatus("400-404,6xx").GetAsync();
 url.AllowAnyHttpStatus().GetAsync();
 ```
 
-The pattern in the first example is fairly self-explanatory: allowed characters include digits, commas for separators, hyphens for ranges, and wildcards `x` or `X` or `*`. The syntactic rules are the same for `Settings.AllowedHttpStatusRange`. One difference is that the request-level settings are _additive_, so for example you don't have to include `2XX` in the request-level pattern if it's already allowed per the settings.
+The pattern in the first example is fairly self-explanatory. Allowed characters include digits, commas for separators, hyphens for ranges, and wildcards `x` or `X` or `*`. These syntax rules are the same for `Settings.AllowedHttpStatusRange`, but there's one subtle behavioral difference: the request-level methods above are _additive_, so for example you don't have to include `2XX` in the request-level pattern if it's already allowed per the settings.
 
 ### Inspecting the Response Before Deserializing
 

@@ -10,7 +10,7 @@ Flurl.Http adheres to this guidance by default. Fluent methods like this will cr
 var data = await "http://api.com/endpoint".GetJsonAsync();
 ```
 
-_* As of 3.0, scheme are port are also considered as part of this caching strategy. So for example, if you are hitting both http and https endpoints of the same host, you'll have at total of 2 instances that can be configured independently._
+_* As of 3.0, scheme are port are also part of the cache key. So for example, if you are hitting both http and https endpoints of the same host, you'll have 2 client instances that can be configured independently._
 
 ### Managing Instances Explicitly
 
@@ -24,10 +24,10 @@ var cli = new FlurlClient("https://api.com")
     .Configure(settings => ...);
 ```
 
-Fluent calls off a `FlurlClient` start with the `Request` method, which optionally takes one or more of URL path segments:
+Fluent calls off a `FlurlClient` start with the `Request` method, which optionally takes one or more URL path segments:
 
 ```c#
-await cli.Request("path", "to", "endpoioint")
+await cli.Request("path", "to", "endpoioint") // shortcut for Request().AppendPathSegments(...)
     .SetQueryParams(args)
     .PostJsonAsync(data)
     .ReceiveJson<T>();
