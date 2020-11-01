@@ -4,7 +4,7 @@ Since most of Flurl's functionality is provided through extension methods, it is
 
 ### Extending the URL builder
 
-Chainable URL builder methods generally come in pairs of overloads - one extending `Flurl.Url` and the other extending `String`, both of which should return the modified `Flurl.Url` object:
+Chainable URL builder methods generally come in sets of 3 overloads: one extending `Flurl.Url`, one extending `System.Uri`, and one extending `String`. All of these should return the modified `Flurl.Url` object:
 
 ```c#
 public static Url DoMyThing(this Url url) {
@@ -12,23 +12,14 @@ public static Url DoMyThing(this Url url) {
     return url;
 }
 
-public static Url DoMyThing(this string url) {
-    return new Url(url).DoMyThing(); // construct Url, call the other method
-}
-```
-
-Now your method is available in 2 scenarios:
-
-```c#
-url = "http://api.com".DoMyThing(); // uses string extension
-url = "http://api.com"
-    .AppendPathSegment("endpoint")
-    .DoMyThing(); // uses Url extension
+// keep these overloads DRY by constructing a Url and deferring to the above method
+public static Url DoMyThing(this Uri uri) => new Url(uri).DoMyThing(); 
+public static Url DoMyThing(this string url) => new Url(url).DoMyThing();
 ```
 
 ### Extending Flurl.Http
 
-Chainable Flurl.Http extension methods generally come in sets of 3 or 4. The first 3, defined on `Url`, `String`, and `IFlurlRequest`, should all return the current `IFlurlRequest` to allow further chaining. Define the `IFlurlRequest` extension first; the others can simply call it, even as a one-line lambda expression in C# 6 or above:
+Chainable Flurl.Http extension methods generally come in sets of 4, extending `Flurl.Url`, `System.Uri`, `String`, and `IFlurlRequest`. All should return the current `IFlurlRequest` to allow further chaining.
 
 ```c#
 public static IFlurlRequest DoMyThing(this IFlurlRequest req) {
@@ -36,8 +27,9 @@ public static IFlurlRequest DoMyThing(this IFlurlRequest req) {
     return req;
 }
 
+// keep these overloads DRY by constructing a Url and deferring to the above method
 public static IFlurlRequest DoMyThing(this Url url) => new FlurlRequest(url).DoMyThing();
-
+public static IFlurlRequest DoMyThing(this Uri uri) => new FlurlRequest(uri).DoMyThing();
 public static IFlurlRequest DoMyThing(this string url) => new FlurlRequest(url).DoMyThing();
 ```
 
@@ -60,5 +52,5 @@ result = "http://api.com"
     .GetAsync();
 ```
 
-You may want to define a fourth extension method on `IFlurlClient`, if it makes sense for your method to configure some sort of default that should apply to all requests made with that client. This method should return the current `IFlurlClient` for further chaining. `WithHeaders` is an example where Flurl.Http defines all 4 extension methods.
+There are cases where you may want yet a fifth overload: an `IFlurlClient` extension. If your extension interacts only with `Settings` or `Headers`, recall that defaults for these exist at the client level, so for completeness it might make sense for your extension to support client-level defaults as well.
 

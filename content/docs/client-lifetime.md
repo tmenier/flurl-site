@@ -1,29 +1,36 @@
 ## HttpClient Lifetime Management
 
-Flurl.Http uses [HttpClient](https://msdn.microsoft.com/en-us/library/system.net.http.httpclient.aspx) under the hood. If you're familiar with this object, you probably already know this [advice](https://docs.microsoft.com/en-us/aspnet/web-api/overview/advanced/calling-a-web-api-from-a-net-client):
+Flurl.Http is built on top of the `System.Net.Http` stack. If you're familiar with `HttpClient`, you probably already know this [advice](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.httpclient#remarks):
 
 > HttpClient is intended to be instantiated once and re-used throughout the life of an application. Especially in server applications, creating a new HttpClient instance for every request will exhaust the number of sockets available under heavy loads. This will result in SocketException errors.
 
-Starting in version 2.0, Flurl.Http adheres to this guidance by default. Fluent methods like this will create an HTTP client lazily, cache it, and reuse it for every call to the same _host_:
+Flurl.Http adheres to this guidance by default. Fluent methods like this will create an `HttpClient` lazily, cache it, and reuse it for every call to the same _host*_:
 
 ```c#
 var data = await "http://api.com/endpoint".GetJsonAsync();
 ```
 
-(Note that this is _not_ the default behavior in 1.x. If you want this behavior without having to manage client objects explicitly, [upgrading](https://www.nuget.org/packages/Flurl.Http/) is highly recommended.)
+_* As of 3.0, scheme are port are also part of the cache key. So for example, if you are hitting both http and https endpoints of the same host, you'll have 2 client instances that can be configured independently._
 
 ### Managing Instances Explicitly
 
-`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. (It implements `IDisposable`, and when disposed will also dispose `HttpClient`.) `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Cookies`, `Settings`, and many of the [fluent methods](fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
+`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. It implements `IDisposable`, and when disposed will also dispose `HttpClient`. `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Settings`, and many of the [fluent methods](fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
 
-So if you want to use Flurl's goodness while maintaining tight control over `HttpClient` instances and their lifetime, `FlurlClient` is the object to use. The `Request` method (new in 2.0) is the preferred way to begin fluently building, configuring and making a call off a `FlurlClient`.
+You can explicitly create a `FlurlClient` and (optionally) configure it fluently:
 
 ```c#
-using (var cli = new FlurlClient("https://api.com").WithOAUthBearerToken(token))
-{
-    await cli.Request("path", "to", "endpoioint").PostJsonAsync(thing);
-    var stuff = await cli.Request("things").SetQueryParam("id", thing.Id).GetAsync();
-}
+var cli = new FlurlClient("https://api.com")
+    .WithOAUthBearerToken(token))
+    .Configure(settings => ...);
+```
+
+Fluent calls off a `FlurlClient` start with the `Request` method, which optionally takes one or more URL path segments:
+
+```c#
+await cli.Request("path", "to", "endpoioint") // shortcut for Request().AppendPathSegments(...)
+    .SetQueryParams(args)
+    .PostJsonAsync(data)
+    .ReceiveJson<T>();
 ```
 
 ### Using Flurl With an IoC Container
@@ -36,7 +43,7 @@ Flurl.Http is well suited for use with IoC containers and dependency injection. 
 
 3. Register `IFlurlClient` as a transient and your services as singletons. This is getting closer to what you want - a single instance per web service. However, a singleton that depends on a transient [is considered bad practice](http://simpleinjector.readthedocs.io/en/latest/LifestyleMismatches.html) and some containers won't allow it.
 
-So how do you get a single instance per web service? The answer lies with the `IFlurlClientFactory` interface (new in 2.0), which exists primarily so that Flurl's instance-per-host default behavior can be overridden. This is also the ideal interface to implement an [instance-per-key](http://simpleinjector.readthedocs.io/en/latest/howto.html#resolve-instances-by-key) IoC strategy. Here's what an implementation might look like:
+So how do you get a single instance per web service? The answer lies with the `IFlurlClientFactory` interface, which exists primarily so that Flurl's instance-per-host default behavior can be overridden. This is also the ideal interface to implement an [instance-per-key](http://simpleinjector.readthedocs.io/en/latest/howto.html#resolve-instances-by-key) IoC strategy. Here's what an implementation might look like:
 
 ```c#
 public class MyService : IMyService
@@ -56,10 +63,10 @@ public class MyService : IMyService
 
 Now simply register `IFlurlClientFactory` as a singleton and you'll get a single `FlurlClient` instance for this service, regardless of how the service itself is registered.
 
-As for the `IFlurlClientFactory` implementation, `PerHostFlurlClientFactory` (used internally to implement the default implicit behavior) would probably work, but it isn't perfect. Say you have services that wrap 2 versions of the same API, where the base URLs are `https://api.com/v1` and `https://api.com/v2`. Since they have the same host, you'll get the same `FlurlClient` instance for both, which could lead to unexpected behavior.
+As for the `IFlurlClientFactory` implementation, the default per-host implementation (`DefaultFlurlClientFactory`) would probably work, but it isn't perfect. Say you have services that wrap 2 versions of the same API, where the base URLs are `https://api.com/v1` and `https://api.com/v2`. Since they have the same host, you'll get the same `FlurlClient` instance for both, which could lead to unexpected behavior.
 
-Flurl comes with an alternative implementation that is better for this scenario: `PerBaseUrlFlurlClientFactory`. Rather than picking the host out of the URL you pass to `Get`, it considers the entire URL to be the key. And as a bonus, it will set `IFlurlClient.BaseUrl` to that URL in the returned instance. So, depending on your container, the registration will look something like this:
+Flurl comes with an alternative implementation that is better for this scenario: `PerBaseUrlFlurlClientFactory`. Rather than picking the host out of the URL you pass to `Get`, it uses the entire URL as the cache key. And as a bonus, it will set `IFlurlClient.BaseUrl` to that URL in the returned instance. So, depending on your container, the registration will look something like this:
 
 ```c#
-container.RegisterSingleton<IFlurlClientFactory, PerBaseUrlFlurlClientFactory>();
+services.AddSingleton<IFlurlClientFactory, PerBaseUrlFlurlClientFactory>();
 ```
