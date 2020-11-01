@@ -11,7 +11,7 @@ using Flurl.Http;
 var result = await baseUrl.AppendPathSegment("endpoint").GetAsync();
 ```
 
-The above code sends a GET HTTP request and returns an `IFlurlResponse`, from which you can get properties such as `StatusCode`, `Headers`, and the body content via methods such as `GetStringAsync` and `GetJsonAsync<T>`.
+The above code sends an HTTP `GET` request and returns an `IFlurlResponse`, from which you can get properties such as `StatusCode`, `Headers`, and the body content via methods such as `GetStringAsync` and `GetJsonAsync<T>`.
 
 But often you just want to jump straight to the body, and Flurl provides a variety of shortcuts to do that:
 
@@ -65,10 +65,10 @@ dynamic d = await url.PutStringAsync(s).ReceiveJson();
 string s = await url.PatchJsonAsync(partial).ReceiveString();
 ```
 
-Weird verbs or content? Go down a level or two:
+Weird verbs or content? Use one of the lower-level methods:
 
 ```c#
-await url.PostAsync(content); // an HttpContent from the HttpClient stack
+await url.PostAsync(content); // a System.Net.Http.HttpContent object
 await url.SendJsonAsync(HttpMethod.Trace, data);
 await url.SendAsync(
     new HttpMethod("CONNECT"),

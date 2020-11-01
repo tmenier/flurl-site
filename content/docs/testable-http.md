@@ -102,21 +102,23 @@ httpTest
 
 ### Act
 
-Once an `HttpTest` is created and any specific responses are queued, simply call into a test subject. When the SUT makes an HTTP call with Flurl, the real call is effectively blocked and the next fake response is dequeued and returned instead. However, when only one response remains in the queue, that response becomes "sticky"; that is, it is not dequeued and hence gets returned in all subsequent calls.
+Once an `HttpTest` is created and any specific responses are queued, simply call into a test subject. When the SUT makes an HTTP call with Flurl, the real call is effectively blocked and the next fake response is dequeued and returned instead. However, when only one response remains in the queue (matching any filter criteria, if provided), that response becomes "sticky", i.e. it is not dequeued and hence gets returned in all subsequent calls.
 
-There is no need to mock or stub any Flurl objects in order for this to work. `HttpTest` flows a signal over the logical asynchronous call context, passing it through the SUT and notifying Flurl to fake the response.
+There is no need to mock or stub any Flurl objects in order for this to work. `HttpTest` uses the logical asynchronous call context to flow a signal through the SUT and notify Flurl to fake the call.
 
 ### Assert
 
-As HTTP calls are faked, they are automatically recorded, allowing you to assert that certain calls were made. Assertions are test framework-agnostic; they throw an exception at any point when a match is not found as specified, signaling a test failure in virtually all testing frameworks.
+As HTTP calls are faked, they are automatically recorded to a call log, allowing you to assert that certain calls were made. Assertions are test framework-agnostic; they throw an exception at any point when a match is not found as specified, signaling a test failure in virtually all testing frameworks.
 
 `HttpTest` provides a couple assertion methods against the call log:
 
 ````c#
 sut.DoThing();
+
 // were calls to specific URLs made?
 httpTest.ShouldHaveCalled("http://some-api.com/*");
 httpTest.ShouldNotHaveCalled("http://other-api.com/*");
+
 // were any calls made?
 httpTest.ShouldHaveMadeACall();
 httpTest.ShouldNotHaveMadeACalled();
@@ -134,7 +136,7 @@ httpTest.ShouldHaveCalled("http://some-api.com/*")
     .Times(3);
 ````
 
-In all cases where a name and value can be passed, a `null` value (the default) means ignore and just assert the name. And like with test setup criteria, the `*` wildcard is supported virtually everywhere. `Times(n)` allows you to assert that the call was made a specific number of times; otherwise, the assertion passes when one or more matching calls were made.
+`Times(n)` allows you to assert that the call was made a specific number of times; otherwise, the assertion passes when one or more matching calls were made. In all cases where a name and value can be passed, a `null` value (the default) means ignore and just assert the name. And like with test setup criteria, the `*` wildcard is supported virtually everywhere.
 
 When the `With*` methods don't give you everything you need, you can go down a level and assert the call log directly:
 

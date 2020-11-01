@@ -1,6 +1,6 @@
 ## Configuration
 
-Flurl.Http behavior is configurable via a hierarchical system of settings objects, each inheriting/overriding the previous in this order:
+Flurl.Http behavior is configurable via a system of hierarchical settings, each level inheriting/overriding the previous in this order:
 
 - `FlurlHttp.GlobalSettings` (static)
 - `IFlurlClient.Settings`
@@ -32,7 +32,7 @@ Note that only the *absence* of explicitly setting a value signals to inherit fr
 
 ### Configuring Settings
 
-`Settings` properties are all read/write, but if you want to change multiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
+Settings properties are all read/write, but if you want to change multiple settings at once (atomically), you should generally do so with one of the `Configure*` methods, which take an `Action<Settings>` lambda.
 
 Configure global defaults:
 
@@ -77,7 +77,7 @@ Let's take a look at some specific settings.
 
 ### HttpClientFactory
 
-*(Not to be confused with .NET Core's [IHttpClientFactory](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.ihttpclientfactory); they are very different things (and Flurl's came first, in case you were wondering. :))*
+(*Not to be confused with .NET Core's [IHttpClientFactory](https://docs.microsoft.com/en-us/dotnet/api/system.net.http.ihttpclientfactory); they are very different things (and Flurl's came first, in case you were wondering ;))*
 
 For advanced scenarios, you can customize the way Flurl.Http constructs `HttpClient` and `HttpMessageHandler` instances. Although it is only required that your custom factory implements `Flurl.Http.Configuration.IHttpClientFactory`, it is recommended to inherit from `DefaultHttpClientFactory` and extend only as needed.
 
@@ -110,13 +110,15 @@ var cli = new FlurlClient(BASE_URL).Configure(settings => {
 
 *A few words of caution:*
 
-1. Overriding `CreateMessageHandler` can very useful for configuring things like proxies and client certificates, but some features that Flurl has re-implemented, such as cookies and redirects, require that the related settings on `HttpClientHandler` remain disabled in order to function properly. It's a best practice to call `base.CreateMessageHandler()` and configure and return that, rather than creating a new one yourself. If in doubt, [have a look at what Flurl does by default](https://github.com/tmenier/Flurl/blob/dev/src/Flurl.Http/Configuration/DefaultHttpClientFactory.cs) and avoid straying farther from that implementation than necessary.
+1. Overriding `CreateMessageHandler` can be very useful for configuring things like proxies and client certificates, but some features that Flurl has re-implemented, such as cookies and redirects, require that the related settings on `HttpClientHandler` remain _disabled_ in order to function properly. It's a best practice to call `base.CreateMessageHandler()` and configure/return that, rather than creating a new one yourself. If in doubt, [have a look at what Flurl does by default](https://github.com/tmenier/Flurl/blob/dev/src/Flurl.Http/Configuration/DefaultHttpClientFactory.cs) and avoid straying farther from that implementation than necessary.
 
 2. A custom `HttpClientFactory` should be concerned only with _creating_ these objects, not caching/reusing them. That's a concern of `FlurlClientFactory`.
 
 ### FlurlClientFactory
 
-`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call that `Url`. The default implementation uses a single cached instance of `FlurlClient` per combination of the URL's host/scheme/port for the lifetime of your application. You could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on the `Url`, without having to implement the cache itself.
+`IFlurlClientFactory` defines one method, `Get(Url)`, which is responsible for providing the `IFlurlClient` instance that should be used to call that `Url`. The default implementation uses a single cached instance of `FlurlClient` per combination of the URL's host/scheme/port for the lifetime of your application.
+
+To change this behavior, you could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on the `Url`, without having to implement the cache itself.
 
 ```c#
 public abstract class FlurlClientFactoryBase : IFlurlClientFactory
@@ -194,7 +196,7 @@ FlurlHttp.Configure(settings => settings.OnErrorAsync = HandleFlurlErrorAsync);
 
 ### Redirects
 
-Like with `HttpClient`, Flurl automatically follows 3xx redirects by default. But the settings and hooks exposed by Flurl offer a greater level of configurability.
+Like `HttpClient`, Flurl automatically follows 3XX redirects by default. But the settings and hooks exposed by Flurl offer a greater level of configurability.
 
 ```c#
 FlurlHttp.Configure(settings => {
@@ -205,7 +207,7 @@ FlurlHttp.Configure(settings => {
 });
 ```
 
-You can also configure redirect behavior on a per-call basis using an event handler.
+You can also configure redirect behavior on a per-call basis using an event handler:
 
 ```c#
 flurlClient.OnRedirect(call => {

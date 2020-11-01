@@ -8,7 +8,7 @@ using Flurl;
 var url = "http://www.some-api.com"
 	.AppendPathSegment("endpoint")
 	.SetQueryParams(new {
-		api_key = ConfigurationManager.AppSettings["SomeApiKey"],
+		api_key = _config.GetValue<string>["SomeApiKey"],
 		max_results = 20,
 		q = "Don't worry, I'll get encoded!"
 	})
@@ -68,9 +68,30 @@ Assert.AreEqual(new[] { "2", "3" }, url.QueryParams.GetAll("y"));
 
 ### Mutability
 
-A `Url` is effectively a mutable builder object that implicitly converts to a string. If you need an immutable URL, such as a base URL as a member variable of a class, a common patter is to type it as a `String`. Methods that need to build off of it can do so using string extension methods, thereby implicitly creating a new `Url` object each time (which is cheap) and adding no more keystrokes than if were typed as a `Url` to begin with. The difference is the original string remains unmodified.
+A `Url` is effectively a mutable builder object that implicitly converts to a string. If you need an immutable URL, such as a base URL as a member variable of a class, a common pattern is to type it as a `String`:
 
-Another way to get around the mutable nature of `Url` when needed is to use the `Clone()` method, which simply creates and exact copy of the current `Url`.
+```c#
+public class MyServiceClass
+{
+	private readonly string _baseUrl;
+
+	public Task CallServiceAsync(string endpoint, object data) {
+		return _baseUrl
+			.AppendPathSegment(endpoint)
+			.PostAsync(data); // requires Flurl.Http package
+	}
+}
+```
+
+Here the call to `AppendPathSegment` creates a new `Url` object. The result is that `_baseUrl` remains unmodified, and you've added no additional "noise" compared to if you had declared it as a `Url`.
+
+Another way to get around the mutable nature of `Url` when needed is to use the `Clone()` method:
+
+```c#
+var url2 = url1.Clone().AppendPathSegment("next");
+```
+
+Here you get a new `Url` object based on another, so you can modify it without changing the original.
 
 ### Encoding
 
