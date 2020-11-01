@@ -32,6 +32,28 @@ catch (FlurlHttpException ex) {
 }
 ```
 
+### Timeouts
+
+Flurl.Http defines a special exception type for timeouts: `FlurlHttpTimeoutException`. This type inherits from `FlurlHttpException`, and hence will get caught in a `catch (FlurlHttpException)` block. But you may want to handle timeouts differently:
+
+```c#
+catch (FlurlHttpTimeoutException) {
+    // handle timeout
+}
+catch (FlurlHttpException) {
+    // handle error response
+}
+```
+
+`FlurlHttpTimeoutException` has no additional properties other than those in `FlurlHttpException`, but because a timeout implies that no response was received, all response-related properties will always be `null`.
+
+The default timeout is 100 seconds (same as `HttpClient`), but this can be [configured](configuration) at any settings level, or inline per request:
+
+```c#
+await url.WithTimeout(200).GetAsync(); // 200 seconds
+await url.WithTimeout(TimeSpan.FromMinutes(10)).GetAsync();
+```
+
 ### Allowing Non-2XX Responses
 
 You can allow additional HTTP statuses (i.e. prevent throwing) fluently per request:
