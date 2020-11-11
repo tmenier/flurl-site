@@ -27,7 +27,7 @@ var cli = new FlurlClient("https://api.com")
 Fluent calls off a `FlurlClient` start with the `Request` method, which optionally takes one or more URL path segments:
 
 ```c#
-await cli.Request("path", "to", "endpoioint") // shortcut for Request().AppendPathSegments(...)
+await cli.Request("path", "to", "endpoint") // shortcut for Request().AppendPathSegments(...)
     .SetQueryParams(args)
     .PostJsonAsync(data)
     .ReceiveJson<T>();
