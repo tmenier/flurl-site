@@ -1,7 +1,7 @@
 <div class="bs-sidebar hidden-print affix well" role="complementary">
 <ul class="nav bs-sidenav">
     {% for nav_item in nav %}
-        {% if nav_item.active and nav_item.children is not None %}
+        {% if nav_item.active and nav_item.children is not none %}
             {% for nav_item in nav_item.children %}
                 <li class="main {% if nav_item.active %}active{% endif %}"><a href="{{ nav_item.url }}">{{ nav_item.title }}</a></li>
                 {% if nav_item.active %}
