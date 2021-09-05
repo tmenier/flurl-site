@@ -12,8 +12,9 @@ theme:
     custom_dir: theme
 docs_dir: content
 extra_css:
+    - css/base.css
     - css/highlightjs.css
-pages:
+nav:
 - Home: index.md
 - Docs:
     - Fluent URL Building: docs/fluent-url.md
