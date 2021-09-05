@@ -5,7 +5,7 @@
     <ul class="nav navbar-nav">
       {% if page.previous_page and not page.previous_page.is_homepage %}
       <li class="nav-prev">
-        <a rel="prev" href="{{ page.previous_page.url }}">
+        <a rel="prev" href="{{ page.previous_page.url|url }}">
           <i class="fa fa-arrow-left"></i> {{page.previous_page.title}}
         </a>
       </li>
@@ -13,7 +13,7 @@
 
       {% if page.next_page %}
       <li class="nav-next">
-        <a rel="next" href="{{ page.next_page.url }}">
+        <a rel="next" href="{{ page.next_page.url|url }}">
           {{page.next_page.title}} <i class="fa fa-arrow-right"></i>
         </a>
       </li>
