@@ -14,7 +14,7 @@ _* As of 3.0, scheme are port are also part of the cache key. So for example, if
 
 ### Managing Instances Explicitly
 
-`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. It implements `IDisposable`, and when disposed will also dispose `HttpClient`. `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Settings`, and many of the [fluent methods](fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
+`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. It implements `IDisposable`, and when disposed will also dispose `HttpClient`. `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Settings`, and many of the [fluent methods](../fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
 
 You can explicitly create a `FlurlClient` and (optionally) configure it fluently:
 

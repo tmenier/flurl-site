@@ -144,4 +144,4 @@ When the `With*` methods don't give you everything you need, you can go down a l
 Assert.That(httpTest.CallLog.Any(call => /* assert anything about the call */));
 ````
 
-`CallLog` is an `IList<FlurlCall>`. A `FlurlCall` object contains lots of useful information as specified [here](configuration/#event-handlers).
+`CallLog` is an `IList<FlurlCall>`. A `FlurlCall` object contains lots of useful information as specified [here](../configuration/#event-handlers).

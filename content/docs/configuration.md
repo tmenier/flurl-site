@@ -60,7 +60,7 @@ Fluently configure a single request (via extension method on `string`, `Url`, or
 await url.ConfigureRequest(settings => ...).GetAsync();
 ```
 
-Override any settings from within a [test](testable-http), regardless what level they're set at in the test subject:
+Override any settings from within a [test](../testable-http), regardless what level they're set at in the test subject:
 
 ```c#
 httpTest.Configure(settings => ...);
@@ -131,7 +131,7 @@ public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 }
 ```
 
-Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](client-lifetime) in conjunction dependency injection patterns.
+Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](../client-lifetime) in conjunction dependency injection patterns.
 
 ### Serializers
 
