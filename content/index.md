@@ -65,5 +65,5 @@ using (var httpTest = new HttpTest()) {
 
 <div class="col-md-4"><div class="well">
 <h3><i class="fa fa-code-fork"></i> Contribute</h3>
-<p>To contribure code, please see the <a href="https://github.com/tmenier/Flurl/wiki/Contribution-Guidelines">contribution guidelines</a>.</p>
+<p>To contribute code, please see the <a href="https://github.com/tmenier/Flurl/wiki/Contribution-Guidelines">contribution guidelines</a>.</p>
 </div></div>
