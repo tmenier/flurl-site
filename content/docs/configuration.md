@@ -24,7 +24,6 @@ OnError                 |         x          |    x     |      x       |       x
 OnErrorAsync            |         x          |    x     |      x       |       x         
 OnRedirect              |         x          |    x     |      x       |       x         
 OnRedirectAsync         |         x          |    x     |      x       |       x         
-ConnectionLeaseTimeout  |         x          |    x     |      x       |                 
 HttpClientFactory       |         x          |    x     |      x       |                 
 FlurlClientFactory      |         x          |          |              |                 
 
