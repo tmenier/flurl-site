@@ -51,7 +51,7 @@ await url.WithTimeout(TimeSpan.FromMinutes(10)).GetAsync();
 
 ### Allowing Non-2XX Responses
 
-If you don't like the default throwing behavior, you can change it at [any settings level](../configuration) via `Settings.AllowedHttpStatusRange`. This is a string based setting that excepts wildcards, so if you never want to throw, set it to `*`.
+If you don't like the default throwing behavior, you can change it at [any settings level](../configuration) via `Settings.AllowedHttpStatusRange`. This is a string based setting that accepts wildcards, so if you never want to throw, set it to `*`.
 
 You can also allow non-2XX at the request level:
 
