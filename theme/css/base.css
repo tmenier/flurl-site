@@ -164,10 +164,10 @@ body .announcement a:visited {
 body.homepage {
   /* hide TOC */
 }
-body.homepage .container > .col-md-3 {
+body.homepage .container > .row > .col-md-3 {
   display: none;
 }
-body.homepage .container > .col-md-9 {
+body.homepage .container > .row > .col-md-9 {
   width: 100%;
 }
 body.homepage a.headerlink {
