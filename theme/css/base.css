@@ -39,44 +39,44 @@ body .announcement a:visited {
   text-decoration: underline;
 }
 /* top nav */
-.navbar {
+.navbar > .container {
   border: none;
   background-color: #333;
   min-height: 44px;
 }
-.navbar .navbar-header {
+.navbar > .container .navbar-header {
   /* logo */
 }
-.navbar .navbar-header :first-letter {
+.navbar > .container .navbar-header :first-letter {
   font-size: 34px;
   font-family: 'Leckerli One', cursive;
   margin-right: 1 px;
 }
-.navbar .navbar-header .navbar-brand {
+.navbar > .container .navbar-header .navbar-brand {
   font-size: 30px;
   color: #fc0;
   font-family: 'Lobster', cursive;
   padding: 15px 15px 7px;
 }
-.navbar .navbar-header .navbar-toggle {
+.navbar > .container .navbar-header .navbar-toggle {
   margin: 7px;
   background-color: #191919;
   outline: none;
 }
-.navbar .navbar-nav > li > a,
-.navbar .navbar-nav > li > a:visited {
+.navbar > .container .navbar-nav > li > a,
+.navbar > .container .navbar-nav > li > a:visited {
   color: #dfdfdf;
   padding: 14px 15px;
 }
-.navbar .navbar-nav > li > a:hover {
+.navbar > .container .navbar-nav > li > a:hover {
   color: #fc0;
 }
-.navbar .navbar-nav > li.active > a,
-.navbar .navbar-nav > li.open > a,
-.navbar .navbar-nav > li.active > a:hover,
-.navbar .navbar-nav > li.open > a:hover,
-.navbar .navbar-nav > li.active > a:focus,
-.navbar .navbar-nav > li.open > a:focus {
+.navbar > .container .navbar-nav > li.active > a,
+.navbar > .container .navbar-nav > li.open > a,
+.navbar > .container .navbar-nav > li.active > a:hover,
+.navbar > .container .navbar-nav > li.open > a:hover,
+.navbar > .container .navbar-nav > li.active > a:focus,
+.navbar > .container .navbar-nav > li.open > a:focus {
   background-color: #252525;
   color: #fc0;
 }
