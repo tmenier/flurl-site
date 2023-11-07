@@ -16,14 +16,13 @@ catch (FlurlHttpException ex) {
 }
 ```
 
-The `Call` property above is an instance of the same [FlurlCall object](configuration/#event-handlers) used by event handlers, providing a wealth of details about the call. For simple logging and debugging, `FlurlHttpException.Message` gives you a handy summary of the error, including the URL, HTTP verb, and status code received.
+The `Call` property above is an instance of the same [FlurlCall object](../configuration/#event-handlers) used by event handlers, providing a wealth of details about the call. For simple logging and debugging, `FlurlHttpException.Message` gives you a handy summary of the error, including the URL, HTTP verb, and status code received.
 
 `FlurlHttpException` also gives you a few shortcuts for deserializing the body:
  
 ```c#
 Task<string> GetResponseStringAsync();
 Task<T> GetResponseJsonAsync<T>();
-Task<dynamic> GetResponseJsonAsync();
 ```
 
 These are all short-hand for equivalent methods on `FlurlHttpException.Call.Response`, so you can go that route if you need something different, such as a stream.
@@ -43,7 +42,7 @@ catch (FlurlHttpException) {
 
 `FlurlHttpTimeoutException` has no additional properties other than those in `FlurlHttpException`, but because a timeout implies that no response was received, all response-related properties will always be `null`.
 
-The default timeout is 100 seconds (same as `HttpClient`), but this can be [configured](configuration) at any settings level, or inline per request:
+The default timeout is 100 seconds (same as `HttpClient`), but this can be [configured](../configuration) at any settings level, or inline per request:
 
 ```c#
 await url.WithTimeout(200).GetAsync(); // 200 seconds
@@ -52,7 +51,7 @@ await url.WithTimeout(TimeSpan.FromMinutes(10)).GetAsync();
 
 ### Allowing Non-2XX Responses
 
-If you don't like the default throwing behavior, you can change it at [any settings level](configuration) via `Settings.AllowedHttpStatusRange`. This is a string based setting that excepts wildcards, so if you never want to throw, set it to `*`.
+If you don't like the default throwing behavior, you can change it at [any settings level](../configuration) via `Settings.AllowedHttpStatusRange`. This is a string based setting that excepts wildcards, so if you never want to throw, set it to `*`.
 
 You can also allow non-2XX at the request level:
 
@@ -90,8 +89,6 @@ Here `response` is an instance of `IFlurlResponse`, which wraps (and exposes) a 
 
 ```c#
 Task<T> GetJsonAsync<T>();
-Task<dynamic> GetJsonAsync();
-Task<IList<dynamic>> GetJsonListAsync();
 Task<string> GetStringAsync();
 Task<Stream> GetStreamAsync();
 Task<byte[]> GetBytesAsync();

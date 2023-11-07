@@ -24,7 +24,6 @@ OnError                 |         x          |    x     |      x       |       x
 OnErrorAsync            |         x          |    x     |      x       |       x         
 OnRedirect              |         x          |    x     |      x       |       x         
 OnRedirectAsync         |         x          |    x     |      x       |       x         
-ConnectionLeaseTimeout  |         x          |    x     |      x       |                 
 HttpClientFactory       |         x          |    x     |      x       |                 
 FlurlClientFactory      |         x          |          |              |                 
 
@@ -60,7 +59,7 @@ Fluently configure a single request (via extension method on `string`, `Url`, or
 await url.ConfigureRequest(settings => ...).GetAsync();
 ```
 
-Override any settings from within a [test](testable-http), regardless what level they're set at in the test subject:
+Override any settings from within a [test](../testable-http), regardless what level they're set at in the test subject:
 
 ```c#
 httpTest.Configure(settings => ...);
@@ -131,7 +130,7 @@ public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 }
 ```
 
-Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](client-lifetime) in conjunction dependency injection patterns.
+Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](../client-lifetime) in conjunction dependency injection patterns.
 
 ### Serializers
 
