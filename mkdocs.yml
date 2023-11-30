@@ -1,29 +1,39 @@
-site_name: Flurl-debug
+site_name: Flurl
 site_description: Fluent URL building and wrist-friendly HTTP client for .NET
 site_author: Todd Menier
 
-repo_url: https://github.com/tmenier/Flurl
-edit_uri: ''
+extra:
+    show_announcement: true
 
-google_analytics: ['UA-120797205-1', 'auto']
+repo_url: https://github.com/tmenier/Flurl
+edit_uri: '' #forces theme to create "GitHub" link (to repo) instead of "Edit on GitHub"
 
 theme:
-    name: flatly
+    name: darkly
     custom_dir: theme
+    navigation_depth: 3
+    highlightjs: true
+    hljs_style: vs2015
+    analytics:
+        gtag: G-98NG0HGG6X
+
 docs_dir: content
 extra_css:
-    - css/base.css
-    - css/highlightjs.css
+    - css/extra.css
+    - https://fonts.googleapis.com/css?family=Leckerli+One|Lobster
+extra_javascript:
+    - js/extra.js
+
 nav:
-- Home: index.md
-- Docs:
-    - Fluent URL Building: docs/fluent-url.md
-    - Fluent HTTP: docs/fluent-http.md
-    - Testable HTTP: docs/testable-http.md
-    - Configuration: docs/configuration.md
-    - Error Handling: docs/error-handling.md
-    - HttpClient Lifetime: docs/client-lifetime.md
-    - Extensibility: docs/extensibility.md
+    - Home: index.md
+    - Docs:
+        - Fluent URL Building: docs/fluent-url.md
+        - Fluent HTTP: docs/fluent-http.md
+        - Testable HTTP: docs/testable-http.md
+        - Configuration: docs/configuration.md
+        - Error Handling: docs/error-handling.md
+        - HttpClient Lifetime: docs/client-lifetime.md
+        - Extensibility: docs/extensibility.md
 
 markdown_extensions:
     - toc:

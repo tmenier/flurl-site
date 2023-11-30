@@ -4,7 +4,7 @@
 
 A pretty common way to think about interacting with an HTTP service is "I want to build a URL and then call it." Flurl.Http allows you to express that pretty concisely:
 
-```c#
+```cs
 using Flurl;
 using Flurl.Http;
 
@@ -15,7 +15,7 @@ The above code sends an HTTP `GET` request and returns an `IFlurlResponse`, from
 
 But often you just want to jump straight to the body, and Flurl provides a variety of shortcuts to do that:
 
-```c#
+```cs
 T poco = await "http://api.foo.com".GetJsonAsync<T>();
 string text = await "http://site.com/readme.txt".GetStringAsync();
 byte[] bytes = await "http://site.com/image.jpg".GetBytesAsync();
@@ -24,7 +24,7 @@ Stream stream = await "http://site.com/music.mp3".GetStreamAsync();
 
 Download a file with ease:
 
-```c#
+```cs
 // filename is optional here; it will default to the remote file name
 var path = await "http://files.foo.com/image.jpg"
     .DownloadFileAsync("c:\\downloads", filename);
@@ -32,14 +32,14 @@ var path = await "http://files.foo.com/image.jpg"
 
 Other "read" verbs:
 
-```c#
+```cs
 var headResponse = await "http://api.foo.com".HeadAsync();
 var optionsResponse = await "http://api.foo.com".OptionsAsync();
 ```
 
 Then there's the "write" verbs:
 
-```c#
+```cs
 await "http://api.foo.com".PostJsonAsync(new { a = 1, b = 2 });
 await "http://api.foo.com/1".PatchJsonAsync(new { c = 3 });
 await "http://api.foo.com/2".PutStringAsync("hello");
@@ -47,14 +47,14 @@ await "http://api.foo.com/2".PutStringAsync("hello");
 
 All of the methods above return a `Task<IFlurlResponse>`. You may of course expect some data to be returned in the response body:
 
-```c#
+```cs
 T poco = await url.PostAsync(content).ReceiveJson<T>();
 string s = await url.PatchJsonAsync(partial).ReceiveString();
 ```
 
 Weird verbs or content? Use one of the lower-level methods:
 
-```c#
+```cs
 await url.PostAsync(content); // a System.Net.Http.HttpContent object
 await url.SendJsonAsync(HttpMethod.Trace, data);
 await url.SendAsync(
@@ -66,7 +66,7 @@ await url.SendAsync(
 
 Set request headers:
 
-```c#
+```cs
 // one:
 await url.WithHeader("Accept", "text/plain").GetJsonAsync();
 // multiple:
@@ -77,13 +77,13 @@ In the second example above, `User_Agent` will automatically render as `User-Age
 
 Specify a timeout:
 
-```c#
+```cs
 await url.WithTimeout(10).DownloadFileAsync(); // 10 seconds
 await url.WithTimeout(TimeSpan.FromMinutes(2)).DownloadFileAsync();
 ```
 
 Cancel a request:
-```c#
+```cs
 var cts = new CancellationTokenSource();
 var task = url.GetAsync(cts.Token);
 ...
@@ -92,19 +92,19 @@ cts.Cancel();
 
 Authenticate using [Basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication):
 
-```c#
+```cs
 await url.WithBasicAuth("username", "password").GetJsonAsync();
 ```
 
 Or an [OAuth 2.0 bearer token](https://tools.ietf.org/html/rfc6750):
 
-```c#
+```cs
 await url.WithOAuthBearerToken("mytoken").GetJsonAsync();
 ```
 
 Simulate an HTML form post:
 
-```c#
+```cs
 await "http://site.com/login".PostUrlEncodedAsync(new { 
     user = "user", 
     pass = "pass"
@@ -126,7 +126,7 @@ var resp = await "http://api.com".PostMultipartAsync(mp => mp
 
 Send some cookies with a request:
 
-```c#
+```cs
 var resp = await "https://cookies.com"
     .WithCookie("name", "value")
     .WithCookies(new { cookie1 = "foo", cookie2 = "bar" })
@@ -135,7 +135,7 @@ var resp = await "https://cookies.com"
 
 Better yet, grab response cookies from the first request and let Flurl determine when to send them back (per [RFC 6265](https://tools.ietf.org/html/rfc6265)):
 
-```c#
+```cs
 await "https://cookies.com/login".WithCookies(out var jar).PostUrlEncodedAsync(credentials);
 await "https://cookies.com/a".WithCookies(jar).GetAsync();
 await "https://cookies.com/b".WithCookies(jar).GetAsync();
@@ -143,7 +143,7 @@ await "https://cookies.com/b".WithCookies(jar).GetAsync();
 
 Or avoid all those `WithCookies` calls and use a `CookieSession`:
 
-```c#
+```cs
 using (var session = new CookieSession("https://cookies.com")) {
     // set any initial cookies on session.Cookies
     await session.Request("a").GetAsync();
@@ -154,7 +154,7 @@ using (var session = new CookieSession("https://cookies.com")) {
 
 A `CookieJar` can also be created/modified explicitly, which may be useful in re-hydrating cookies that were persisted:
 
-```c#
+```cs
 var jar = new CookieJar()
     .AddOrUpdate("cookie1", "foo", "https://cookies.com") // you must specify the origin URL
     .AddOrUpdate("cookie2", "bar", "https://cookies.com");

@@ -1,1 +1,1 @@
-cmd /k mkdocs serve
+cmd /k mkdocs serve --watch-theme

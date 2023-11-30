@@ -6,7 +6,7 @@ Flurl.Http is built on top of the `System.Net.Http` stack. If you're familiar wi
 
 Flurl.Http adheres to this guidance by default. Fluent methods like this will create an `HttpClient` lazily, cache it, and reuse it for every call to the same _host*_:
 
-```c#
+```cs
 var data = await "http://api.com/endpoint".GetJsonAsync();
 ```
 
@@ -14,11 +14,11 @@ _* As of 3.0, scheme are port are also part of the cache key. So for example, if
 
 ### Managing Instances Explicitly
 
-`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. It implements `IDisposable`, and when disposed will also dispose `HttpClient`. `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Settings`, and many of the [fluent methods](../fluent-http) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
+`FlurlClient` is a lightweight wrapper around `HttpClient` and is tightly bound to its lifetime. It implements `IDisposable`, and when disposed will also dispose `HttpClient`. `FlurlClient` includes a `BaseUrl` property, as well as `Headers`, `Settings`, and many of the [fluent methods](fluent-http.md) you may already be familiar with. Most of these properties and methods are used to set defaults that can be overridden at the request level.
 
 You can explicitly create a `FlurlClient` and (optionally) configure it fluently:
 
-```c#
+```cs
 var cli = new FlurlClient("https://api.com")
     .WithOAUthBearerToken(token))
     .Configure(settings => ...);
@@ -26,7 +26,7 @@ var cli = new FlurlClient("https://api.com")
 
 Fluent calls off a `FlurlClient` start with the `Request` method, which optionally takes one or more URL path segments:
 
-```c#
+```cs
 await cli.Request("path", "to", "endpoint") // shortcut for Request().AppendPathSegments(...)
     .SetQueryParams(args)
     .PostJsonAsync(data)
@@ -45,7 +45,7 @@ Flurl.Http is well suited for use with IoC containers and dependency injection. 
 
 So how do you get a single instance per web service? The answer lies with the `IFlurlClientFactory` interface, which exists primarily so that Flurl's instance-per-host default behavior can be overridden. This is also the ideal interface to implement an [instance-per-key](http://simpleinjector.readthedocs.io/en/latest/howto.html#resolve-instances-by-key) IoC strategy. Here's what an implementation might look like:
 
-```c#
+```cs
 public class MyService : IMyService
 {
     private readonly IFlurlClient _flurlClient;
@@ -67,6 +67,6 @@ As for the `IFlurlClientFactory` implementation, the default per-host implementa
 
 Flurl comes with an alternative implementation that is better for this scenario: `PerBaseUrlFlurlClientFactory`. Rather than picking the host out of the URL you pass to `Get`, it uses the entire URL as the cache key. And as a bonus, it will set `IFlurlClient.BaseUrl` to that URL in the returned instance. So, depending on your container, the registration will look something like this:
 
-```c#
+```cs
 services.AddSingleton<IFlurlClientFactory, PerBaseUrlFlurlClientFactory>();
 ```
