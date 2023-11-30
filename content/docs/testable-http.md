@@ -2,7 +2,7 @@
 
 Flurl.Http provides a set of testing features that make isolated arrange-act-assert style testing dead simple. At its core is `HttpTest`, the creation of which kicks Flurl into test mode, where all HTTP activity in the test subject is automatically faked and recorded.
 
-````c#
+````cs
 using Flurl.Http.Testing;
 
 [Test]
@@ -16,7 +16,7 @@ public void Test_Some_Http_Calling_Method() {
 
 Most unit testing frameworks have some notion of setup/teardown methods that are executed before/after each test *. For classes with lots of tests against HTTP-calling code, you might prefer this approach:
 
-````c#
+````cs
 private HttpTest _httpTest;
 
 [SetUp]
@@ -41,20 +41,20 @@ public void Test_Some_Http_Calling_Method() {
 
 By default, fake HTTP calls return a 200 (OK) status with an empty body. Of course you'll likely want to test your code against other responses.
 
-````c#
+````cs
 httpTest.RespondWith("some response body");
 sut.DoThing();
 ````
 
 Use objects for JSON responses:
 
-````c#
+````cs
 httpTest.RespondWithJson(new { x = 1, y = 2 });
 ````
 
 Test failure conditions:
 
-````c#
+````cs
 httpTest.RespondWith("server error", 500);
 httpTest.RespondWithJson(new { message = "unauthorized" }, 401);
 httpTest.SimulateTimeout();
@@ -62,7 +62,7 @@ httpTest.SimulateTimeout();
 
 `RespondWith*` methods are chainable:
 
-````c#
+````cs
 httpTest
     .RespondWith("some response body")
     .RespondWithJson(someObject)
@@ -75,7 +75,7 @@ Behind the scenes, each `RespondWith*` adds a fake response to a thread-safe que
 
 Starting in 3.0, you also have the ability to set up responses that only apply to requests that match specific criteria. This example demonstrates all possibilities:
 
-```c#
+```cs
 httpTest
     .ForCallsTo("*.api.com*", "*.test-api.com*") // multiple allowed, wildcard supported
     .WithVerb("put", "PATCH") // or HttpMethod.Put, HttpMethod.Patch
@@ -94,7 +94,7 @@ httpTest
 
 Need to make real calls in certain cases?
 
-```c#
+```cs
 httpTest
     .ForCallsTo("https://api.thirdparty.com/*")
     .AllowRealHttp();
@@ -112,7 +112,7 @@ As HTTP calls are faked, they are automatically recorded to a call log, allowing
 
 `HttpTest` provides a couple assertion methods against the call log:
 
-````c#
+````cs
 sut.DoThing();
 
 // were calls to specific URLs made?
@@ -126,7 +126,7 @@ httpTest.ShouldNotHaveMadeACalled();
 
 You can make further assertions against specific calls, fluently of course:
 
-````c#
+````cs
 httpTest.ShouldHaveCalled("http://some-api.com/*")
     .WithQueryParam("x", "1*")
     .WithVerb(HttpMethod.Post)
@@ -140,8 +140,8 @@ httpTest.ShouldHaveCalled("http://some-api.com/*")
 
 When the `With*` methods don't give you everything you need, you can go down a level and assert the call log directly:
 
-````c#
+````cs
 Assert.That(httpTest.CallLog.Any(call => /* assert anything about the call */));
 ````
 
-`CallLog` is an `IList<FlurlCall>`. A `FlurlCall` object contains lots of useful information as specified [here](../configuration/#event-handlers).
+`CallLog` is an `IList<FlurlCall>`. A `FlurlCall` object contains lots of useful information as specified [here](configuration.md#event-handlers).

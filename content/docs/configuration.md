@@ -35,39 +35,39 @@ Settings properties are all read/write, but if you want to change multiple setti
 
 Configure global defaults:
 
-```c#
+```cs
 // call once at application startup
 FlurlHttp.Configure(settings => ...);
 ```
 
 You can also configure the `FlurlClient` that will be used to call a given URL. It is important to note that the same `FlurlClient` is used for all calls to the same _host_ by default, so this will potentially affect more than just calls to the _specific_ URL provided:
 
-```c#
+```cs
 // call once at application startup
 FlurlHttp.ConfigureClient(url, cli => ...);
 ```
 
 If you're managing `FlurlClient`s explicitly:
 
-```c#
+```cs
 flurlClient.Configure(settings => ...);
 ```
 
 Fluently configure a single request (via extension method on `string`, `Url`, or `IFlurlRequest`):
 
-```c#
+```cs
 await url.ConfigureRequest(settings => ...).GetAsync();
 ```
 
-Override any settings from within a [test](../testable-http), regardless what level they're set at in the test subject:
+Override any settings from within a [test](testable-http.md), regardless what level they're set at in the test subject:
 
-```c#
+```cs
 httpTest.Configure(settings => ...);
 ```
 
 If needed, you can revert settings at any level back to their default or inherited values:
 
-```c#
+```cs
 flurlClient.Settings.ResetDefaults();
 FlurlHttp.GlobalSettings.ResetDefaults();
 ```
@@ -80,7 +80,7 @@ Let's take a look at some specific settings.
 
 For advanced scenarios, you can customize the way Flurl.Http constructs `HttpClient` and `HttpMessageHandler` instances. Although it is only required that your custom factory implements `Flurl.Http.Configuration.IHttpClientFactory`, it is recommended to inherit from `DefaultHttpClientFactory` and extend only as needed.
 
-```c#
+```cs
 public class MyCustomHttpClientFactory : DefaultHttpClientFactory
 {
     // override to customize how HttpClient is created/configured
@@ -93,7 +93,7 @@ public class MyCustomHttpClientFactory : DefaultHttpClientFactory
 
 Register your factory globally:
 
-```c#
+```cs
 FlurlHttp.Configure(settings => {
     settings.HttpClientFactory = new MyCustomHttpClientFactory();
 });
@@ -101,7 +101,7 @@ FlurlHttp.Configure(settings => {
 
 Or (less common) on an individual `FlurlClient`:
 
-```c#
+```cs
 var cli = new FlurlClient(BASE_URL).Configure(settings => {
     settings.HttpClientFactory = new MyCustomHttpClientFactory();
 });
@@ -119,7 +119,7 @@ var cli = new FlurlClient(BASE_URL).Configure(settings => {
 
 To change this behavior, you could define your own factory by implementing `IFlurlClientFactory` directly, but inheriting from `FlurlClientFactoryBase` is much easier. It allows you to define a caching _strategy_ by returning a cache key based on the `Url`, without having to implement the cache itself.
 
-```c#
+```cs
 public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 {
     // override to customize how FlurlClient instances are cached/reused
@@ -130,13 +130,13 @@ public abstract class FlurlClientFactoryBase : IFlurlClientFactory
 }
 ```
 
-Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](../client-lifetime) in conjunction dependency injection patterns.
+Although the `FlurlClientFactory` configuration setting is only available at the global level, `IFlurlClientFactory` is also [useful](client-lifetime.md) in conjunction dependency injection patterns.
 
 ### Serializers
 
 Both `JsonSerializer` and `UrlEncodedSerializer` implement `ISerializer`, a simple interface for serializing objects to and from strings.
 
-```C#
+```cs
 public interface ISerializer
 {
     string Serialize(object obj);
@@ -147,7 +147,7 @@ public interface ISerializer
 
 Both have a default implementation registered globally, and replacing them is possible but not common. The default `JsonSerializer` implementation is `NewtonsoftJsonSerializer` that, as you probably guessed, uses the ever popular [Json.NET](https://www.newtonsoft.com/json) library. Although it's unlikely that you'd want to _replace_ this implementation, note that its constructor takes a `Newtonsoft.Json.JsonSerializerSettings` argument, which is a nice hook for tapping into the many [custom serialization settings](https://www.newtonsoft.com/json/help/html/SerializationSettings.htm) that library offers:
 
-```c#
+```cs
 FlurlHttp.Configure(settings => {
     var jsonSettings = new JsonSerializerSettings
     {
@@ -162,7 +162,7 @@ FlurlHttp.Configure(settings => {
 
 Keeping cross-cutting concerns like logging and error handling separated from your normal logic flow often results in cleaner code. Flurl.Http provides an event model for these scenarios. `BeforeCall`, `AfterCall`, `OnError`, `OnRedirect`, and their `*Async` equivalents are typically defined at the global or client level, but can be defined per request if it makes sense. These settings each take an `Action<HttpCall>` delegate (`Func<HttpCall, Task>` for the async versions). `FlurlCall` provides rich details about the call that you can act upon:
 
-```c#
+```cs
 public class FlurlCall
 {
     public IFlurlRequest Request { get; set; }
@@ -184,7 +184,7 @@ public class FlurlCall
 
 Not surprisingly, response-related properties will be `null` in `BeforeCall`. `AfterCall` fires after both successful and failed requests. Setting `ExceptionHandled` to `true` in `OnError` prevents exceptions from bubbling up. Here's an example of registering a global async error handler:
 
-```c#
+```cs
 private async Task HandleFlurlErrorAsync(HttpCall call) {
     await LogErrorAsync(call.Exception.Message);
     call.ExceptionHandled = true;
@@ -197,7 +197,7 @@ FlurlHttp.Configure(settings => settings.OnErrorAsync = HandleFlurlErrorAsync);
 
 Like `HttpClient`, Flurl automatically follows 3XX redirects by default. But the settings and hooks exposed by Flurl offer a greater level of configurability.
 
-```c#
+```cs
 FlurlHttp.Configure(settings => {
     settings.Redirects.Enabled = true; // default true
     settings.Redirects.AllowSecureToInsecure = true; // default false
@@ -208,7 +208,7 @@ FlurlHttp.Configure(settings => {
 
 You can also configure redirect behavior on a per-call basis using an event handler:
 
-```c#
+```cs
 flurlClient.OnRedirect(call => {
     if (call.Redirect.Count > 5) {
         call.Redirect.Follow = false;
@@ -223,7 +223,7 @@ flurlClient.OnRedirect(call => {
 
 If you just need to enable/disable auto-redirect for a single call, you can do it inline:
 
-```c#
+```cs
 await url.WithAutoRedirect(false).GetAsync();
 ```
 

@@ -1,0 +1,121 @@
+@charcoal: #222;
+@gray: #333;
+@light-gray: #666;
+@white: #dfdfdf;
+@yellow: #fc0;
+@black: #191919;
+@pale-yellow: #ffd;
+
+html { scroll-padding-top: 70px; }
+
+body {
+    color: @white;
+    font-size: 16px;
+
+    a, a:visited { color: @yellow; }
+    a:hover { color: @yellow !important; }
+    h2, h3 { font-size: 24px; }
+    .active>.nav-link { color: @yellow !important; }
+
+    pre, code { background: @black; }
+    pre {
+        padding: 12px;
+        border-color: #000;
+    }
+    
+    #announcement {
+        color: @charcoal;
+        background-color: @pale-yellow;
+        text-align: center;
+        padding: 6px;
+    
+        a, a:hover, a:active, a:visited {
+            color: @charcoal;
+            text-decoration: underline;
+        }
+    }
+
+    .navbar {
+        background-color: @gray !important;
+        padding: 0;
+        a:hover { text-decoration: none }
+
+        .logo {
+            font-size: 30px;
+            color: @yellow;
+            font-family: 'Lobster', cursive;
+            padding: 0 15px;
+
+            &:first-letter {
+                font-size: 34px;
+                font-family: 'Leckerli One', cursive;
+                margin-right: 1 px;
+            }
+        }
+
+        /* tabs */
+        .navbar-nav {
+            .nav-link {
+                margin: 6px 10px;
+                color: @white 
+            }
+            .active {
+                background-color: @charcoal;
+                >.nav-link { color: @yellow !important; }
+            }
+            .dropdown-item { 
+                color: @white;
+                &:hover { background-color: @gray; }
+            }
+        }
+    }
+
+    .bs-sidebar {
+        .bg-secondary { background-color: @gray !important; }
+        .nav>li>a { font-weight: normal; }
+        .nav>li>a.active { border: none; }
+        .nav>li>ul>li>a.active { border-right: 1px solid @yellow; }
+        .nav-link { color: @white; }
+        .nav-item.sub { padding-left: 20px; }
+        .active-top { color: @yellow; }
+        &.affix { top: 72px; }
+    }
+
+    blockquote {
+        border-left: 3px solid @gray;
+        margin-left: 0;
+        padding-left: 1em;
+    }
+    
+    footer {
+        background-color: @gray;
+        margin-bottom: 0;
+        padding: 1.5em;
+    }
+}
+
+body.homepage {
+    a.headerlink { display: none; }
+    h2, h3 { margin-top: 12px; }
+
+    .well {
+        background-color: @gray;
+        padding: 6px 0;
+        text-align: center;
+        margin: 10px;
+        padding: 10px 20px;
+        height: 132px;
+        border-radius: 4px;
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 991px) {
+    .col-md-3 { display: none; }
+    .col-md-9 {
+        max-width: 100%;
+        padding: 15px;
+    }
+    .navbar-fixed-top { position: absolute; }
+    h1 { font-size: 33px; }
+}

@@ -6,7 +6,7 @@ Since most of Flurl's functionality is provided through extension methods, it is
 
 Chainable URL builder methods generally come in sets of 3 overloads: one extending `Flurl.Url`, one extending `System.Uri`, and one extending `String`. All of these should return the modified `Flurl.Url` object:
 
-```c#
+```cs
 public static Url DoMyThing(this Url url) {
     // do something interesting with url
     return url;
@@ -21,7 +21,7 @@ public static Url DoMyThing(this string url) => new Url(url).DoMyThing();
 
 Chainable Flurl.Http extension methods generally come in sets of 4, extending `Flurl.Url`, `System.Uri`, `String`, and `IFlurlRequest`. All should return the current `IFlurlRequest` to allow further chaining.
 
-```c#
+```cs
 public static IFlurlRequest DoMyThing(this IFlurlRequest req) {
     // do something interesting with req.Settings, req.Headers, req.Url, etc.
     return req;
@@ -35,7 +35,7 @@ public static IFlurlRequest DoMyThing(this string url) => new FlurlRequest(url).
 
 Now all of these work:
 
-```c#
+```cs
 result = await "http://api.com"
     .DoMyThing() // string extension
     .GetAsync();
