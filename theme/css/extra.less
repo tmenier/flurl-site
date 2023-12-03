@@ -28,10 +28,12 @@ body {
         background-color: @pale-yellow;
         text-align: center;
         padding: 6px;
-    
-        a, a:hover, a:active, a:visited {
-            color: @charcoal;
-            text-decoration: underline;
+
+        a {
+            color: @black !important;
+            font-weight: bold;
+            text-decoration: none;
+            &:hover { text-decoration: underline; }
         }
     }
 

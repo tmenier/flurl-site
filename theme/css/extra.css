@@ -33,11 +33,12 @@ body #announcement {
   text-align: center;
   padding: 6px;
 }
-body #announcement a,
-body #announcement a:hover,
-body #announcement a:active,
-body #announcement a:visited {
-  color: #222;
+body #announcement a {
+  color: #191919 !important;
+  font-weight: bold;
+  text-decoration: none;
+}
+body #announcement a:hover {
   text-decoration: underline;
 }
 body .navbar {
