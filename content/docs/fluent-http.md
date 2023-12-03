@@ -22,7 +22,19 @@ byte[] bytes = await "http://site.com/image.jpg".GetBytesAsync();
 Stream stream = await "http://site.com/music.mp3".GetStreamAsync();
 ```
 
-Download a file with ease:
+With JSON APIs, it's usually best define a class (`T` above) that matches the shape of the expected JSON response. But if that feels like overkill, skip it and get a dynamic:
+
+```c#
+dynamic d = await "http://api.foo.com".GetJsonAsync();
+```
+
+Or get a list of dynamics from an API that returns a JSON array:
+
+```c#
+var list = await "http://api.foo.com".GetJsonListAsync();
+```
+
+Download a file:
 
 ```cs
 // filename is optional here; it will default to the remote file name
@@ -49,6 +61,7 @@ All of the methods above return a `Task<IFlurlResponse>`. You may of course expe
 
 ```cs
 T poco = await url.PostAsync(content).ReceiveJson<T>();
+dynamic d = await url.PutStringAsync(s).ReceiveJson();
 string s = await url.PatchJsonAsync(partial).ReceiveString();
 ```
 

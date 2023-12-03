@@ -23,6 +23,7 @@ The `Call` property above is an instance of the same [FlurlCall object](configur
 ```cs
 Task<string> GetResponseStringAsync();
 Task<T> GetResponseJsonAsync<T>();
+Task<dynamic> GetResponseJsonAsync();
 ```
 
 These are all short-hand for equivalent methods on `FlurlHttpException.Call.Response`, so you can go that route if you need something different, such as a stream.
@@ -89,6 +90,8 @@ Here `response` is an instance of `IFlurlResponse`, which wraps (and exposes) a 
 
 ```cs
 Task<T> GetJsonAsync<T>();
+Task<dynamic> GetJsonAsync();
+Task<IList<dynamic>> GetJsonListAsync();
 Task<string> GetStringAsync();
 Task<Stream> GetStreamAsync();
 Task<byte[]> GetBytesAsync();
