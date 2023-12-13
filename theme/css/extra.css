@@ -19,6 +19,9 @@ body h3 {
 body .active > .nav-link {
   color: #fc0 !important;
 }
+body hr {
+  border-top: 2px solid #333;
+}
 body pre,
 body code {
   background: #191919;
