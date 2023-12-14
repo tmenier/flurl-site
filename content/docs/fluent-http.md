@@ -2,118 +2,79 @@
 
 *NOTE: Everything beyond URL building and parsing requires installing [Flurl.Http](https://www.nuget.org/packages/Flurl.Http/) rather than the base [Flurl](https://www.nuget.org/packages/Flurl/) package.*
 
+### Basic Usage
+
 A pretty common way to think about interacting with an HTTP service is "I want to build a URL and then call it." Flurl.Http allows you to express that pretty concisely:
 
 ```cs
 using Flurl;
 using Flurl.Http;
 
-var result = await baseUrl.AppendPathSegment("endpoint").GetAsync();
+var result = await "https://some-api.com"
+    .AppendPathSegment("endpoint") 
+    .GetStringAsync();
 ```
 
-The above code sends an HTTP `GET` request and returns an `IFlurlResponse`, from which you can get properties such as `StatusCode`, `Headers`, and the body content via methods such as `GetStringAsync` and `GetJsonAsync<T>`.
-
-But often you just want to jump straight to the body, and Flurl provides a variety of shortcuts to do that:
+Get things other than strings:
 
 ```cs
 T poco = await "http://api.foo.com".GetJsonAsync<T>();
-string text = await "http://site.com/readme.txt".GetStringAsync();
 byte[] bytes = await "http://site.com/image.jpg".GetBytesAsync();
 Stream stream = await "http://site.com/music.mp3".GetStreamAsync();
 ```
 
-With JSON APIs, it's usually best define a class (`T` above) that matches the shape of the expected JSON response. But if that feels like overkill, skip it and get a dynamic:
-
-```c#
-dynamic d = await "http://api.foo.com".GetJsonAsync();
-```
-
-Or get a list of dynamics from an API that returns a JSON array:
-
-```c#
-var list = await "http://api.foo.com".GetJsonListAsync();
-```
-
-Download a file:
+The above examples all send an HTTP `GET` request. All other common verbs are also supported:
 
 ```cs
-// filename is optional here; it will default to the remote file name
-var path = await "http://files.foo.com/image.jpg"
-    .DownloadFileAsync("c:\\downloads", filename);
+var result = await "http://api.foo.com".PostJsonAsync(requestObj).ReceiveJson<T>();
+var resultStr = await "http://api.foo.com/1".PatchJsonAsync(requestObj).ReceiveString();
+var resultStr2 = await "http://api.foo.com/2".PutStringAsync("hello").ReceiveString();
+var resp = await "http://api.foo.com".OptionsAsync();
+await "http://api.foo.com".HeadAsync();
 ```
 
-Other "read" verbs:
+### Responses and Error Handling
+
+Most of the examples above demonstrate getting some representation of the response _body_ only. So how do you handle a failure response, such as a 400, whose body may take a very different shape? Flurl differs from `HttpClient` in that it throws on any 4xx or greater response status by default, and the `FlurlHttpException` thrown allows you to inspect the body separately:
 
 ```cs
-var headResponse = await "http://api.foo.com".HeadAsync();
-var optionsResponse = await "http://api.foo.com".OptionsAsync();
+try {
+    var result = await url.PostJsonAsync(requestObj).ReceiveJson<T>();
+}
+catch (FlurlHttpException ex) {
+    var err = await ex.GetResponseJsonAsync<TError>(); // or GetResponseStringAsync(), etc.
+    logger.Write($"Error returned from {ex.Call.Request.Url}: {err.SomeDetails}");
+}
 ```
 
-Then there's the "write" verbs:
+Of course, you may want to inspect the response status independently of error-handling, or inspect other response properties such as headers. Using `GetAsync`, or just excluding the `ReceiveXXX`, from non-GET calls, returns an `IFlurlResponse`:
 
 ```cs
-await "http://api.foo.com".PostJsonAsync(new { a = 1, b = 2 });
-await "http://api.foo.com/1".PatchJsonAsync(new { c = 3 });
-await "http://api.foo.com/2".PutStringAsync("hello");
+var resp1 = await "http://api.foo.com".GetAsync();
+var resp2 = await "http://api.foo.com".PostJsonAsync(requestObj);
 ```
 
-All of the methods above return a `Task<IFlurlResponse>`. You may of course expect some data to be returned in the response body:
+From which you can read other information before consuming the body:
 
 ```cs
-T poco = await url.PostAsync(content).ReceiveJson<T>();
-dynamic d = await url.PutStringAsync(s).ReceiveJson();
-string s = await url.PatchJsonAsync(partial).ReceiveString();
+int status = resp.StatusCode;
+string headerVal = resp.Headers.FirstOrDefault("my-header");
+T body = await resp.GetJsonAsync<T>();
 ```
 
-Weird verbs or content? Use one of the lower-level methods:
+If you prefer inspecting status codes this way exclusively, you can disable the exception-throwing behavior for specific statuses or all of them:
 
 ```cs
-await url.PostAsync(content); // a System.Net.Http.HttpContent object
-await url.SendJsonAsync(HttpMethod.Trace, data);
-await url.SendAsync(
-    new HttpMethod("CONNECT"),
-    httpContent, // optional
-    cancellationToken,  // optional
-    HttpCompletionOption.ResponseHeaderRead);  // optional
+var resp2 = await "http://api.foo.com".AllowHttpStatus(400, 401).GetAsync();
+var resp3 = await "http://api.foo.com".AllowHttpStatus("400-403,5xx").GetAsync();
+var resp1 = await "http://api.foo.com".AllowAnyHttpStatus().GetAsync();
 ```
 
-Set request headers:
+In the last example, `x`, `X`, and `*` are all valid wildcards. Note that you do not need to include 2xx or 3xx codes explicitly; those are considered "success" statuses and never throw.
 
-```cs
-// one:
-await url.WithHeader("Accept", "text/plain").GetJsonAsync();
-// multiple:
-await url.WithHeaders(new { Accept = "text/plain", User_Agent = "Flurl" }).GetJsonAsync();
-```
+### Simulating a Browser
 
-In the second example above, `User_Agent` will automatically render as `User-Agent` in the header name. (Hyphens are very common in header names but not allowed in C# identifiers; underscores, just the opposite.)
-
-Specify a timeout:
-
-```cs
-await url.WithTimeout(10).DownloadFileAsync(); // 10 seconds
-await url.WithTimeout(TimeSpan.FromMinutes(2)).DownloadFileAsync();
-```
-
-Cancel a request:
-```cs
-var cts = new CancellationTokenSource();
-var task = url.GetAsync(cts.Token);
-...
-cts.Cancel();
-```
-
-Authenticate using [Basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication):
-
-```cs
-await url.WithBasicAuth("username", "password").GetJsonAsync();
-```
-
-Or an [OAuth 2.0 bearer token](https://tools.ietf.org/html/rfc6750):
-
-```cs
-await url.WithOAuthBearerToken("mytoken").GetJsonAsync();
-```
+Flurl includes first-class support for things like form posts and cookies, which are more typical with web browsers than REST APIs.
 
 Simulate an HTML form post:
 
@@ -124,7 +85,7 @@ await "http://site.com/login".PostUrlEncodedAsync(new {
 });
 ```
 
-Or a `multipart/form-data` POST:
+Or a multipart form POST (typically associated with file uploads):
 
 ``` c#
 var resp = await "http://api.com".PostMultipartAsync(mp => mp
@@ -135,6 +96,14 @@ var resp = await "http://api.com".PostMultipartAsync(mp => mp
     .AddJson("json", new { foo = "x" })         // json
     .AddUrlEncoded("urlEnc", new { bar = "y" }) // URL-encoded                      
     .Add(content));                             // any HttpContent
+```
+
+Download a file:
+
+```cs
+// filename is optional here; it will default to the remote file name
+var path = await "http://files.foo.com/image.jpg"
+    .DownloadFileAsync("c:\\downloads", filename);
 ```
 
 Send some cookies with a request:
@@ -157,22 +126,92 @@ await "https://cookies.com/b".WithCookies(jar).GetAsync();
 Or avoid all those `WithCookies` calls and use a `CookieSession`:
 
 ```cs
-using (var session = new CookieSession("https://cookies.com")) {
-    // set any initial cookies on session.Cookies
-    await session.Request("a").GetAsync();
-    await session.Request("b").GetAsync();
-    // read cookies at any point using session.Cookies
+using var session = new CookieSession("https://cookies.com");
+// set any initial cookies on session.Cookies
+await session.Request("a").GetAsync();
+await session.Request("b").GetAsync();
+// read cookies at any point using session.Cookies
+```
+
+In the above examples, `jar` and `session.Cookies` are instances of `CookieJar`. This is Flurl's equivalent of `CookieContainer` from the `HttpClient` stack, but with one major advantage: it is not bound to an `HttpMessageHandler`, hence you can simulate multiple cookie "sessions" on a single `HttClient/Handler` instance. It can also be easily persisted and reloaded between sessions:
+
+```cs
+// string-based persistence:
+var saved = jar.ToString();
+var jar2 = CookieJar.LoadFromString(saved);
+
+// file-based persistence:
+using var writer = new StreamWriter("path/to/file");
+jar.WriteTo(writer);
+
+using var reader = new StreamReader("path/to/file");
+var jar2 = CookieJar.LoadFrom(reader);
+```
+
+### Additional Use Cases
+
+Set request headers:
+
+```cs
+// one:
+await url.WithHeader("Accept", "text/plain").GetJsonAsync();
+// multiple:
+await url.WithHeaders(new { Accept = "text/plain", User_Agent = "Flurl" }).GetJsonAsync();
+```
+
+In the second example above, `User_Agent` will automatically render as `User-Agent` in the header name. Hyphens are very common in header names but not allowed in C# identifiers; underscores, just the opposite.
+
+Authenticate using [Basic authentication](https://en.wikipedia.org/wiki/Basic_access_authentication):
+
+```cs
+await url.WithBasicAuth("username", "password").GetJsonAsync();
+```
+
+Or an [OAuth 2.0 bearer token](https://tools.ietf.org/html/rfc6750):
+
+```cs
+await url.WithOAuthBearerToken("mytoken").GetJsonAsync();
+```
+
+Specify a timeout:
+
+```cs
+await url.WithTimeout(10).GetAsync(); // 10 seconds
+await url.WithTimeout(TimeSpan.FromMinutes(2)).GetAsync();
+```
+
+Handle a timeout error:
+
+```cs
+try {
+    var result = await url.GetStringAsync();
+}
+catch (FlurlHttpTimeoutException) {
+    // handle timeouts
+}
+catch (FlurlHttpException) {
+    // handle error responses
 }
 ```
 
-A `CookieJar` can also be created/modified explicitly, which may be useful in re-hydrating cookies that were persisted:
+`FlurlHttpTimeoutException` inherits from `FlurlHttpException` and hence could be handled from the same `catch` block, but the above example demonstrates handling it as a special case.
+
+Weird verbs or content? Use one of the lower-level methods:
 
 ```cs
-var jar = new CookieJar()
-    .AddOrUpdate("cookie1", "foo", "https://cookies.com") // you must specify the origin URL
-    .AddOrUpdate("cookie2", "bar", "https://cookies.com");
-
-await "https://cookies.com/a".WithCookies(jar).GetAsync();
+await url.PostAsync(content); // content is a System.Net.Http.HttpContent
+await url.SendJsonAsync(HttpMethod.Trace, data);
+await url.SendAsync(
+    new HttpMethod("CONNECT"),
+    httpContent, // optional
+    cancellationToken,  // optional
+    HttpCompletionOption.ResponseHeaderRead);  // optional
 ```
 
-`CookieJar` is Flurl's equivalent of `CookieContainer` from the `HttpClient` stack, but with one major advantage: it is not bound to an `HttpMessageHandler`, hence you can simulate multiple cookie "sessions" on a single `HttClient/Handler` instance.
+Cancel a request:
+```cs
+var cts = new CancellationTokenSource();
+var task = url.GetAsync(cts.Token);
+...
+cts.Cancel();
+```

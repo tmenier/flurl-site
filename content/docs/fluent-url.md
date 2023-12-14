@@ -1,33 +1,61 @@
 ## Fluent URL Building
 
-Flurl's URL builder is best explained with an example:
+Flurl was born as a modest URL builder. It is still available as a [stand-alone package](https://www.nuget.org/packages/Flurl), although most of the capabilities described on this site require [Flurl.Http](https://www.nuget.org/packages/Flurl.Http).
+
+Here's the builder in action:
 
 ```cs
 using Flurl;
 
-var url = "http://www.some-api.com"
+var url = "https://some-api.com"
 	.AppendPathSegment("endpoint")
 	.SetQueryParams(new {
-		api_key = _config.GetValue<string>["SomeApiKey"],
+		api_key = _config.GetValue<string>("MyApiKey"),
 		max_results = 20,
-		q = "Don't worry, I'll get encoded!"
+		q = "I'll get encoded!"
 	})
-	.SetFragment("after-hash");
+	.SetFragment("frag");
+
+// result:
+// https://some-api.com/endpoint?api_key=xxx&max_results=20&q=I%27ll%20get%20encoded%21#frag
 ```
 
-The example above (and most on this site) uses an extension method off `String` to implicitly create a `Url` object. You can do exactly the same explicitly if you prefer:
+This example (and most on this site) uses a string extension method to implicitly create a `Flurl.Url` object. This object converts back to a string implicitly, meaning you can pass a `Url` object to any method that takes a string without explictly invoking `ToString()`. Combined, these features allow you to manipulate URL strings in a structured manner without ever enlisting the builder object explicitly.
+
+Of course you may still create a `Url` object explicitly if you prefer:
 
 ```cs
 var url = new Url("http://www.some-api.com").AppendPathSegment(...
 ```
 
-As of 3.0, all extension methods available on `String` are also available on `System.Uri`. In either case, you can use the builder methods and convert back to the original representation (using `ToString()` or `ToUri()`) in single fluent call chain.
+All string extension methods are also available on `System.Uri`.
 
-In addition to the object notation above, `SetQueryParams` also accepts any collection of key-value pairs, Tuples, or a Dictionary object. These alternatives are particularly useful for parameter names that are not valid C# identifiers. There's also a `SetQueryParam` (singular) if you want to set them one by one. In any case, these methods overwrite any previously set values of the same name, but you can set multiple values of the same name by passing a collection:
+The first example demonstrated setting query parameters using object notation, where property names are map to parameter names. There are other approaches available:
 
 ```cs
-var url = "http://www.mysite.com".SetQueryParam("x", new[] { 1, 2, 3 });
-Assert.AreEqual("http://www.mysite.com?x=1&x=2&x=3", url)
+url.SetQueryParam("name", "value"); // one by one
+url.SetQueryParams(dictionary); // any IDictionary<string, object>
+url.SetQueryParams(kvPairs); // any IEnumerable<KeyValuePair>
+url.SetQueryParams(new[] {(name1, value1), (name2, value2), ...}); // any collection of Tuples
+url.SetQueryParams(new[] {
+	new { name = "foo", value = 1 }, ...}); // virtually anything resembling name/value pairs
+```
+
+These alternatives are particularly useful when parameter names are variable or not valid C# identifiers.
+
+`SetQueryParam(s)` overwrites any previously set values of the same name, but you can set multiple values of the same name by passing a collection:
+
+```cs
+"https://some-api.com".SetQueryParam("x", new[] { 1, 2, 3 }); // https://some-api.com?x=1&x=2&x=3
+```
+
+To add multiple values in multiple steps without overwriting, just use `AppendQueryParam(s)` instead:
+
+```cs
+"https://some-api.com"
+	.AppendQueryParam("x", 1);
+	.AppendQueryParam("x", 2);
+	.AppendQueryParams("x", new[] { 3, 4 }); // https://some-api.com?x=1&x=2&x=3&x=4
 ```
 
 Builder methods and their overloads are highly discoverable, intuitive, and always chainable. A few destructive methods are also included, such as `RemoveQueryParam`, `RemovePathSegment`, and `ResetToRoot`.
@@ -38,18 +66,26 @@ In addition to building URLs, `Flurl.Url` is effective at decomposing an existin
 
 ```cs
 var url = new Url("https://user:pass@www.mysite.com:1234/with/path?x=1&y=2#foo");
-Assert.AreEqual("https", url.Scheme);
-Assert.AreEqual("user:pass", url.UserInfo);
-Assert.AreEqual("www.mysite.com", url.Host);
-Assert.AreEqual(1234, url.Port);
-Assert.AreEqual("user:pass@www.mysite.com:1234", url.Authority);
-Assert.AreEqual("https://user:pass@www.mysite.com:1234", url.Root);
-Assert.AreEqual("/with/path", url.Path);
-Assert.AreEqual("x=1&y=2", url.Query);
-Assert.AreEqual("foo", url.Fragment);
+Assert.Equal("https", url.Scheme);
+Assert.Equal("user:pass", url.UserInfo);
+Assert.Equal("www.mysite.com", url.Host);
+Assert.Equal(1234, url.Port);
+Assert.Equal("user:pass@www.mysite.com:1234", url.Authority);
+Assert.Equal("https://user:pass@www.mysite.com:1234", url.Root);
+Assert.Equal("/with/path", url.Path);
+Assert.Equal("x=1&y=2", url.Query);
+Assert.Equal("foo", url.Fragment);
 ```
 
-Although similar to the parsing capabilities of `System.Uri`, Flurl aims to be more compliant with  [RFC 3986](https://tools.ietf.org/html/rfc3986), and more true to the actual string provided, and therefore differs in the following ways:
+In addition, `Url.QueryParams` is a special collection type that maintains order and allows duplicate names, but is optimized for the typical case of unique names:
+
+```cs
+var url = new Url("https://www.mysite.com?x=1&y=2&y=3");
+Assert.Equal("1", url.QueryParams.FirstOrDefault("x"));
+Assert.Equal(new[] { "2", "3" }, url.QueryParams.GetAll("y"));
+```
+
+Although its parsing capabilities are similar to those of of `System.Uri`, Flurl aims to be more compliant with  [RFC 3986](https://tools.ietf.org/html/rfc3986), and more true to the actual string provided, and therefore differs in the following ways:
 
 - `Uri.Query` includes the `?` character; `Url.Query` does not.
 - `Uri.Fragment` includes the `#` character; `Url.Fragment` does not.
@@ -57,14 +93,6 @@ Although similar to the parsing capabilities of `System.Uri`, Flurl aims to be m
 - `Uri.Authority` does not include user info (i.e. `user:pass@`); `Url.Authority` does.
 - `Uri.Port` has a default value if not present; `Url.Port` is nullable and is not defaulted.
 - `Uri` will make no attempt to parse a relative URL; `Url` assumes that if the string doesn't start with `{scheme}://`, then it starts with a path and parses it accordingly.
-
-`Url.QueryParams` is a special collection type that maintains order and allows duplicate names, but is optimized for the typical case of unique names:
-
-```cs
-var url = new Url("https://www.mysite.com?x=1&y=2&y=3");
-Assert.AreEqual("1", url.QueryParams.FirstOrDefault("x"));
-Assert.AreEqual(new[] { "2", "3" }, url.QueryParams.GetAll("y"));
-```
 
 ### Mutability
 
@@ -95,7 +123,7 @@ Here you get a new `Url` object based on another, so you can modify it without c
 
 ### Encoding
 
-Flurl takes care of encoding characters in URLs but takes a different approach with path segments than it does with query string values. The assumption is that query string values are highly variable (such as from user input), whereas path segments tend to be more "fixed" and may already be encoded, in which case you don't want to double-encode. Here are the rules Flurl follows:
+Flurl takes care of encoding characters in URLs, but it takes a different approach with path segments than it does with query string values. The assumption is that query string values are highly variable (such as from user input), whereas path segments tend to be more "fixed" and may already be encoded, in which case you don't want to double-encode. Here are the rules Flurl follows:
 
 - Query string values are fully URL-encoded.
 - For path segments, *reserved* characters such as `/` and `%` are *not* encoded.
@@ -105,15 +133,15 @@ Flurl takes care of encoding characters in URLs but takes a different approach w
 In some cases, you might want to set a query parameter that you know to be already encoded. `SetQueryParam` has optional `isEncoded` argument:
 
 ```cs
-url.SetQueryParam("x", "don%27t%20touch%20me", true);
+url.SetQueryParam("x", "I%27m%20already%20encoded", true);
 ```
 
 While the official URL encoding for the space character is `%20`, it's very common to see `+` used in query parameters. You can tell `Url.ToString` to do this with its optional `encodeSpaceAsPlus` argument:
 
 ```cs
 var url = "http://foo.com".SetQueryParam("x", "hi there");
-Assert.AreEqual("http://foo.com?x=hi%20there", url.ToString());
-Assert.AreEqual("http://foo.com?x=hi+there", url.ToString(true));
+Assert.Equal("http://foo.com?x=hi%20there", url.ToString());
+Assert.Equal("http://foo.com?x=hi+there", url.ToString(true));
 ```
 
 ### Utility Methods
@@ -127,6 +155,13 @@ var url = Url.Combine(
     "too", "few?",
     "x=1", "y=2"
 // result: "http://www.foo.com/too/many/slashes/too/few?x=1&y=2"
+```
+
+Check if a given string is a well-formed absolute URL:
+
+```cs
+if (!Url.IsValid(input))
+	throw new Exception("You entered an invalid URL!");
 ```
 
 And to help you avoid some of the notorious [quirks](https://github.com/tmenier/Flurl/issues/262) associated with the various URL encoding/decoding methods in .NET, Flurl provides some "quirk-free" alternatives:
