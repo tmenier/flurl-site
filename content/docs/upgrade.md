@@ -1,6 +1,6 @@
 ## Upgrading from 3.x
 
-This section highlights the features that were removed or significantly overhauled in Flurl.Http 4.0, and how to adapt existing code when upgrading.
+This section highlights the most significant breaking changes in Flurl.Http 4.0 and how to adapt your existing code when upgrading. For a comprehensive list of all changes in 4.0, please refer to the [release notes](https://github.com/tmenier/Flurl/releases/tag/Flurl.Http.4.0.0).
 
 ### New Default JSON Serializer
 
