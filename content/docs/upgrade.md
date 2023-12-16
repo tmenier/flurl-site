@@ -1,6 +1,6 @@
 ## Upgrading from 3.x
 
-This section highlights the most significant breaking changes in Flurl.Http 4.0 and how to adapt your existing code when upgrading. For a comprehensive list of all changes in 4.0, please refer to the [release notes](https://github.com/tmenier/Flurl/releases/tag/Flurl.Http.4.0.0).
+This section highlights the most significant breaking changes in Flurl.Http 4.0 and how to adapt your existing code when upgrading.
 
 ### New Default JSON Serializer
 
@@ -14,35 +14,32 @@ Microsoft provides a [migration guide](https://learn.microsoft.com/en-us/dotnet/
 
 _"This all sounds painful, I just want to keep using Newtonsoft!"_
 
-You're in luck, because there's an alternative: install [Flurl.Http.Newtonsoft](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/), a companion package that brings back the original serializer in 4.0 and beyond. The package readme contains all details of its usage.
+You're in luck, because there's an alternative: install [Flurl.Http.Newtonsoft](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/), a companion package that brings back the 3.x serializer in 4.0 and beyond. Refer to the package [readme](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/#readme-body-tab) for details of its usage.
 
 ### No More Dynamics
 
-`dynamic` types have somewhat [fallen out of favor](https://github.com/dotnet/runtime/issues/53195) in the .NET world and are not supported by `System.Text.Json`. Therefore, all non-generic, `dynamic`-returning methods like `GetJsonAsync()` were dropped in 4.0. If you used these methods, one way forward is to create full-blown classes to replace your `dynamic`s and use generic methods like `GetJsonAsync<T>()` instead.
+`dynamic` types have somewhat [fallen out of favor](https://github.com/dotnet/runtime/issues/53195) in the .NET world and are not supported by `System.Text.Json`. Therefore, all non-generic, `dynamic`-returning methods like `GetJsonAsync()` were [dropped](https://github.com/tmenier/Flurl/issues/699) in 4.0. If you use these methods today, one way forward is to create full-blown classes to replace your `dynamic`s and use generic methods like `GetJsonAsync<T>()` instead.
 
 But once again, the alternative is installing [Flurl.Http.Newtonsoft](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/). Since direct `dynamic` support still exists in Newtonsoft, those `dynamic`-returning Flurl methods were ported over to that library.
 
 ### No More Factories
 
-In Flurl 3.x, you were able to fine-tune behavior by creating and registering implementations of `IFlurlClientFactory` and `IHttpClientFactory`.
+In Flurl 3.x, you were able to fine-tune behavior by creating and registering custom implementations of `IFlurlClientFactory` and `IHttpClientFactory`. Both have been removed in favor of simpler, more fluent ways to achieve the same results, such as configuring the inner `HttpMessageHandler` and changing the client caching strategy when the clientless pattern is used. Refer to the matrix below for details.
 
-The main use case for creating a custom `IFlurlClientFactory` was to define a custom strategy for caching clients when the clientless pattern is used; more specifically, overriding `DefaultFlurlClientFactory.GetCacheKey`. The direct replacement is to simply call `FlurlHttp.UseClientCachingStrategy(Func<IFlurlRequest, string>)`. An advantage of the new way is that you can use other properties of the request besides the URL, such as headers, to define a cache key. An example of that is shown [here](clients.md#clientless-usage).
+### Configuration Changes
 
-`IHttpClientFactory` (not to be confused with .NET's [more-famous interface](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-requests) of the same name) was particularly useful as a hook to configure the underlying `HttpMessageHandler`. Uses ranged from [configuring proxies](https://stackoverflow.com/q/50649348/62600) to inserting [DelegatingHanders](https://learn.microsoft.com/en-us/dotnet/api/system.net.http.delegatinghandler). This factory has also been removed, and the way forward is configuring these things fluently:
+Flurl's configuration system got a major [overhaul](https://github.com/tmenier/Flurl/issues/770) in 4.0, with the goals of making it more fluent, more [DI-friendly](clients.md#using-dependency-injection), and a bit more familiar to those accustomed to using [.NET's IHttpClientFactory](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-requests). This matrix should help you adapt your existing code:
 
-```cs
-flurlClientBuilder
-    .ConfigureHttpClient(hc => ...)
-    .ConfigureInnerHandler(hch => ...)
-    .AddMiddleware(() => ...)
-```
+| How do I... | 3.x | 4.0 ||
+|--|--|--|--|
+| Configure client or request settings | `cliOrRequest.Configure` | `cliOrRequest.WithSettings` | [more info](configuration.md#settings) |
+| Configure client used to call a specific URL | `FlurlHttp.ConfigureClient` | `FlurlHttp.ConfigureClientForUrl` | [more info](clients.md#clientless-usage) |
+| Configure "global" defaults | `FlurlHttp.Configure` | `FlurlHttp.Clients.WithDefaults` | [more info](configuration.md#settings) |
+| Handle an event | `cliOrRequest.Settings   .BeforeCall[Async] = call => ...` | `cliOrRequest.BeforeCall(call => ...)` | [more info](configuration.md#event-handlers) |
+| Configure inner-most HttpMessageHandler | Inherit from `DefaultHttpClientFactory`, override `CreateMessageHandler`, register factory | `IFlurlClientBuilder.ConfigureInnerHandler` | [more info](configuration.md#message-handlers) |
+| Add a DelegatingHandler | Inherit from `DefaultHttpClientFactory`, override `CreateMessageHandler`, register factory | `IFlurlClientBuilder.AddMiddleware` | [more info](configuration.md#message-handlers) |
+| Change the client caching strategy | Inherit from `DefaultFlurlClientFactory`, override `GetCacheKey`, register factory | `FlurlHttp.UseClientCachingStrategy` | [more info](clients.md#clientless-usage) |
 
-How you get an `IFlurlClientBuilder` instance depends on whether you're using the clientless pattern or DI, whether you're configuring one client or all of them, etc. All of these things are described in detail in the The [Configuration](configuration.md) section.
+### More Changes
 
-### Configuring Clients and Requests
-
-You may notice that calling `.Configure(settings => ...)` on a `FlurlClient` or `FlurlRequest` no longer compiles. This one's an easy fix: the method was renamed to `WithSettings` for better clarity.
-
-### Global Configuration
-
-The `FlurlHttp` static class that's been around since earlier versions still exists in 4.0, but its role has been reduced to managing a behind-the-scenes `IFlurlClientCache` used in support of the [clientless pattern](clients.md#clientless-usage). While the notion of a "global" settings object technically no longer exists, it has effectively been replaced by `FlurlHttp.Clients.WithDefaults` for the clientless pattern, and more generally (including when [using DI](clients.md#using-dependency-injection)) by `IFlurlClientCache.WithDefaults`. The [Configuration](configuration.md) section describes these patterns in more detail.
+Although this page is not meant to be an exhaustive list of changes in 4.0, the [release notes](https://github.com/tmenier/Flurl/releases/tag/Flurl.Http.4.0.0) provide such a list. If you encounter a pain point while upgrading that you feel should be better covered here, you're encouraged to edit this page directly using the link below, or [open an issue in the docs repo](https://github.com/tmenier/flurl-site/issues/new) to make a more general suggestion.
