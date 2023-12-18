@@ -52,7 +52,7 @@ await url.WithTimeout(TimeSpan.FromMinutes(10)).GetAsync();
 
 ### Allowing Non-2XX Responses
 
-If you don't like the default throwing behavior, you can change it at [any settings level](configuration.md) via `Settings.AllowedHttpStatusRange`. This is a string based setting that excepts wildcards, so if you never want to throw, set it to `*`.
+If you don't like the default throwing behavior, you can change it at [any settings level](configuration.md) via `Settings.AllowedHttpStatusRange`. This is a string based setting that accepts wildcards, so if you never want to throw, set it to `*`.
 
 You can also allow non-2XX at the request level:
 
@@ -72,11 +72,11 @@ var response = await url
     .AllowAnyHttpStatus()
     .GetAsync();
 
-if (result.StatusCode < 300) {
+if (response.StatusCode < 300) {
     var result = await response.GetJsonAsync<T>();
     Console.WriteLine($"Success! {result}")
 }
-else if (result.StatusCode < 500) {
+else if (response.StatusCode < 500) {
     var error = await response.GetJsonAsync<UserErrorData>();
     Console.WriteLine($"You did something wrong! {error}")
 }
