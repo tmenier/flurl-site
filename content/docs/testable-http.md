@@ -125,7 +125,7 @@ httpTest.ShouldNotHaveCalled("http://other-api.com/*");
 
 // were any calls made?
 httpTest.ShouldHaveMadeACall();
-httpTest.ShouldNotHaveMadeACalled();
+httpTest.ShouldNotHaveMadeACall();
 ````
 
 You can make further assertions against specific calls, fluently of course:
