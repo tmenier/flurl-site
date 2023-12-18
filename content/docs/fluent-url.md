@@ -153,7 +153,7 @@ var url = Url.Combine(
     "http://foo.com/",
     "/too/", "/many/", "/slashes/",
     "too", "few?",
-    "x=1", "y=2"
+    "x=1", "y=2");
 // result: "http://www.foo.com/too/many/slashes/too/few?x=1&y=2"
 ```
 
