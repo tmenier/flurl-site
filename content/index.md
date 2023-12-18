@@ -53,7 +53,7 @@ using (var httpTest = new HttpTest()) {
 
     <div class="col well">
     <h3><i class="fa fa-stack-overflow"></i> Ask a Question</h3>
-    <p>For programming question related to Flurl, please <a href="http://stackoverflow.com/questions/ask?tags=flurl">ask</a> on Stack Overflow.</p>
+    <p>For programming questions related to Flurl, please <a href="http://stackoverflow.com/questions/ask?tags=flurl">ask on Stack Overflow</a>.</p>
     </div>
 </div>
 
@@ -70,6 +70,6 @@ using (var httpTest = new HttpTest()) {
 
     <div class="col well">
     <h3><i class="fa fa-code-fork"></i> Contribute</h3>
-    <p>To contribure code, please see the <a href="https://github.com/tmenier/Flurl/wiki/Contribution-Guidelines">contribution guidelines</a>.</p>
+    <p>To contribute code, please see the <a href="https://github.com/tmenier/Flurl/wiki/Contribution-Guidelines">contribution guidelines</a>.</p>
     </div>
 </div>

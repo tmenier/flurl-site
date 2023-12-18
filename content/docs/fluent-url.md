@@ -1,6 +1,6 @@
 ## Fluent URL Building
 
-Flurl was born as a modest URL builder. It is still available as a [stand-alone package](https://www.nuget.org/packages/Flurl), although most of the capabilities described on this site require [Flurl.Http](https://www.nuget.org/packages/Flurl.Http).
+Flurl was born as a modest URL builder. While most of the capabilities described on this site require [Flurl.Http](https://www.nuget.org/packages/Flurl.Http), the builder is still available as a [stand-alone package](https://www.nuget.org/packages/Flurl) if it's all you need.
 
 Here's the builder in action:
 
@@ -14,10 +14,10 @@ var url = "https://some-api.com"
 		max_results = 20,
 		q = "I'll get encoded!"
 	})
-	.SetFragment("frag");
+	.SetFragment("after-hash");
 
 // result:
-// https://some-api.com/endpoint?api_key=xxx&max_results=20&q=I%27ll%20get%20encoded%21#frag
+// https://some-api.com/endpoint?api_key=xxx&max_results=20&q=I%27ll%20get%20encoded%21#after-hash
 ```
 
 This example (and most on this site) uses a string extension method to implicitly create a `Flurl.Url` object. This object converts back to a string implicitly, meaning you can pass a `Url` object to any method that takes a string without explictly invoking `ToString()`. Combined, these features allow you to manipulate URL strings in a structured manner without ever enlisting the builder object explicitly.
