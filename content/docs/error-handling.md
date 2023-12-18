@@ -71,11 +71,11 @@ var response = await url
     .AllowAnyHttpStatus()
     .GetAsync();
 
-if (result.StatusCode < 300) {
+if (response.StatusCode < 300) {
     var result = await response.GetJsonAsync<T>();
     Console.WriteLine($"Success! {result}")
 }
-else if (result.StatusCode < 500) {
+else if (response.StatusCode < 500) {
     var error = await response.GetJsonAsync<UserErrorData>();
     Console.WriteLine($"You did something wrong! {error}")
 }
