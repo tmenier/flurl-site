@@ -7,10 +7,9 @@ using Flurl.Http.Testing;
 
 [Test]
 public void Test_Some_Http_Calling_Method() {
-    using (var httpTest = new HttpTest()) {
-        // Flurl is now in test mode
-        sut.CallThingThatUsesFlurlHttp(); // HTTP calls are faked!
-    }
+    using var httpTest = new HttpTest();
+    // Flurl is now in test mode
+    await sut.CallThingThatUsesFlurlAsync(); // HTTP calls are faked!
 }
 ````
 
@@ -43,7 +42,6 @@ By default, fake HTTP calls return a 200 (OK) status with an empty body. Of cour
 
 ````cs
 httpTest.RespondWith("some response body");
-sut.DoThing();
 ````
 
 Use objects for JSON responses:
@@ -67,13 +65,9 @@ httpTest
     .RespondWith("some response body")
     .RespondWithJson(someObject)
     .RespondWith("error!", 500);
-    
-sut.DoThingThatMakesSeveralHttpCalls();
 ````
 
-Behind the scenes, each `RespondWith*` adds a fake response to a thread-safe queue.
-
-Starting in 3.0, you also have the ability to set up responses that only apply to requests that match specific criteria. This example demonstrates all possibilities:
+Set up responses that only apply to requests that match specific criteria:
 
 ```cs
 httpTest
@@ -90,6 +84,16 @@ httpTest
     .With(call => true) // check anything on the FlurlCall
     .Without(call => false) // check anything on the FlurlCall
     .RespondWith("all conditions met!", 200);
+```
+
+Each time `RespondWith*` is called, a fake response is added to a thread-safe queue that Flurl will use [later](#act).
+
+Want to apply different [settings](configuration.md#settings) while testing?
+
+```cs
+httpTest.WithSettings(settings => settings.Redirects.Enabled = false);
+// or in this case, simply:
+httpTest.WithAutoRedirect(false);
 ```
 
 Need to make real calls in certain cases?
