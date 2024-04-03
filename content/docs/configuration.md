@@ -215,7 +215,7 @@ services.AddLogging();
 // register service that implements IFlurlEventHander and has dependency on ILogger
 services.AddSingleton<IFlurlErrorLogger, FlurlErrorLogger>();
 
-// register event hanlder with Flurl, using IServiceProvider to wire up dependencies:
+// register event handler with Flurl, using IServiceProvider to wire up dependencies:
 services.AddSingleton<IFlurlClientCache>(sp => new FlurlClientCache()
     .WithDefaults(builder =>
         builder.EventHandlers.Add((FlurlEventType.OnError, sp.GetService<IFlurlErrorLogger>()))
