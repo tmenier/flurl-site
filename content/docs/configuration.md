@@ -279,7 +279,7 @@ The final type of message handler Flurl supports directly is [DelegatingHandler]
 ```cs
 // clientless pattern:
 FlurlHttp.Clients.WithDefaults(builder => builder
-    .AddMiddleare(new MyDelegatingHandler()));
+    .AddMiddleware(new MyDelegatingHandler()));
 
 // DI pattern: 
 services.AddSingleton<IFlurlClientCache>(sp => new FlurlClientCache()
