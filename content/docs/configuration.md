@@ -81,7 +81,7 @@ FlurlHttp.Clients.WithDefaults(builder =>
 
 // clientless pattern, for a specific site/service:
 FlurlHttp.ConfigureClientForUrl("https://some-api.com")
-    .WtihSettings(...);
+    .WithSettings(...);
 
 // DI pattern:
 services.AddSingleton<IFlurlClientCache>(_ => new FlurlClientCache()
