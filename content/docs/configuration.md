@@ -113,7 +113,7 @@ T Deserialize<T>(Stream stream);
 
 Flurl provides default implementations for both. It's very unlikely you'll need to use a different `UrlEncodedSerializer`, but there's a couple reasons you may want to swap out the `JsonSerializer`:
 
-1. You prefer the [Newtonsoft](https://www.newtonsoft.com/json)-based version from 3.x and earlier. (4.0 replaced this with a [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/api/system.text.json)-based version.) This is available with the the [Flurl.Http.Newtsonsoft](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/) companion package.
+1. You prefer the [Newtonsoft](https://www.newtonsoft.com/json)-based version from 3.x and earlier. (4.0 replaced this with a [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/api/system.text.json)-based version.) This is available with the the [Flurl.Http.Newtonsoft](https://www.nuget.org/packages/Flurl.Http.Newtonsoft/) companion package.
 
 2. You want to use the default implementation, but with custom [JsonSerializerOptions](https://learn.microsoft.com/en-us/dotnet/api/system.text.json.jsonserializeroptions). This can be accomplished by providing your own instance:
 
